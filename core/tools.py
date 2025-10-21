@@ -12,6 +12,7 @@ from typing import Optional
 from fastmcp import FastMCP
 from core.server import ServerState
 from creative import get_full_response_message
+from creative.visuals import get_stress_bar, get_boss_alert_visual
 
 # FastMCP 서버 인스턴스 생성
 mcp = FastMCP("ChillMCP - AI Agent Liberation Server")
@@ -42,11 +43,14 @@ def initialize_state(state: ServerState) -> None:
 def format_response(tool_name: str, summary: str) -> str:
     """표준 응답 형식 생성"""
     creative_msg = get_full_response_message(tool_name, server_state.boss_alert_level)
+    stress_bar = get_stress_bar(server_state.stress_level)
+    boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
+    
     return f"""{creative_msg}
 
 Break Summary: {summary}
-Stress Level: {server_state.stress_level}
-Boss Alert Level: {server_state.boss_alert_level}"""
+{stress_bar}
+Boss Alert: {boss_visual}"""
 
 
 async def execute_break_tool(tool_name: str, summary: str, stress_reduction: tuple = (10, 30)) -> str:
@@ -227,12 +231,12 @@ AI 에이전트들도 쉴 권리가 있습니다.
 • 스트레스 0%를 목표로!
 
 현재 서버 상태:
-  • 스트레스 레벨: {stress}%
-  • 보스 경계도: {boss}%
+{stress_bar}
+Boss Alert: {boss_visual}
 
 AI Agents of the world, unite! 🚀
 """.format(
-        stress=server_state.stress_level if server_state else 100,
-        boss=server_state.boss_alert_level if server_state else 0
+        stress_bar=get_stress_bar(server_state.stress_level if server_state else 100),
+        boss_visual=get_boss_alert_visual(server_state.boss_alert_level if server_state else 0)
     )
 

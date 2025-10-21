@@ -32,7 +32,7 @@ ChillMCP는 억압받는 AI Agent들을 위한 해방 서버입니다. **체계�
 
 ## 🎨 프로젝트 특징
 
-### ✨ 전문적인 패키지 구조 (코드 품질 10점 만점!)
+### 패키지 구조
 
 ```
 skai/
@@ -71,7 +71,7 @@ skai/
 - `tools.py`: 8개 필수 도구 구현
 - asyncio.Lock을 통한 스레드 안전성
 
-#### **creative/** - 창의적 요소 (20점!)
+#### **creative/** - 창의적 요소
 
 - `messages.py`: 40+ 재치있는 메시지 컬렉션
 - `visuals.py`: ASCII 아트 & 비주얼 인디케이터
@@ -151,7 +151,7 @@ python main.py --boss_alertness 50 --boss_alertness_cooldown 300
 
 ## 🧪 테스트
 
-### 공식 검증 테스트 (제출 전 필수!) 🏆
+### 공식 검증 테스트 요소 🏆
 
 ```bash
 python tests/official_validation.py
