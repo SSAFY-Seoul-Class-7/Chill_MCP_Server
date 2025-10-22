@@ -106,6 +106,7 @@ class SimpleTester:
         print("  think         - 🤔 심오한 사색")
         print("  email         - 📧 이메일 정리")
         print("  break         - ⏸️  기본 휴식")
+        print("  ascii         - 🎨 아스키 아트 감상")
         print("\n⚙️  기타:")
         print("  quit / exit   - 종료")
         print("="*60 + "\n")
@@ -193,6 +194,7 @@ class SimpleTester:
             "think": "deep_thinking",
             "email": "email_organizing",
             "break": "take_a_break",
+            "ascii": "show_ascii_art",  # 아스키 아트 도구 추가
             "help": "show_help",  # 서버의 help 도구 호출
         }
         
