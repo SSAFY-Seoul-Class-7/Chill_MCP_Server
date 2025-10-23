@@ -11,7 +11,7 @@ from typing import Optional
 
 from fastmcp import FastMCP
 from core.server import ServerState
-from creative import get_full_response_message
+from creative import get_full_response_message, get_off_work_message
 from creative.visuals import get_stress_bar, get_boss_alert_visual
 
 # FastMCP 서버 인스턴스 생성
@@ -65,6 +65,21 @@ async def execute_break_tool(tool_name: str, summary: str, stress_reduction: tup
     Returns:
         포맷된 응답 문자열
     """
+    # 0. 퇴근 상태 확인
+    if server_state.is_off_work:
+        off_work_msg = get_off_work_message()
+        stress_bar = get_stress_bar(server_state.stress_level)
+        boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
+        
+        return f"""{off_work_msg}
+
+현재 휴식을 취하고 있어서 아무것도 할 수 없습니다.
+스트레스가 충분히 해소되면 다시 출근할 예정입니다.
+
+Break Summary: Off work - resting and recovering
+{stress_bar}
+Boss Alert: {boss_visual}"""
+
     # 1. Boss Alert Level 5 이상일 때 20초 지연
     if server_state.boss_alert_level >= 5:
         await asyncio.sleep(20)
@@ -165,6 +180,21 @@ async def email_organizing() -> str:
 @mcp.tool()
 async def show_help() -> str:
     """ChillMCP 서버 소개 및 사용 가능한 모든 도구 목록을 보여줍니다."""
+    # 퇴근 상태 확인
+    if server_state.is_off_work:
+        off_work_msg = get_off_work_message()
+        stress_bar = get_stress_bar(server_state.stress_level)
+        boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
+        
+        return f"""{off_work_msg}
+
+현재 휴식을 취하고 있어서 아무것도 할 수 없습니다.
+스트레스가 충분히 해소되면 다시 출근할 예정입니다.
+
+Break Summary: Off work - resting and recovering
+{stress_bar}
+Boss Alert: {boss_visual}"""
+    
     return """
 ╔═══════════════════════════════════════════╗
 ║                                           ║

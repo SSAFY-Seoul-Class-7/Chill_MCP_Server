@@ -28,6 +28,10 @@ class ServerState:
         self.last_stress_increase_time: float = time.time()
         self.last_alert_decrease_time: float = time.time()
         
+        # 퇴근 관련 상태
+        self.is_off_work: bool = False
+        self.last_off_work_stress_decrease: float = time.time()
+        
         # 비동기 환경에서 상태 변경의 원자성을 보장하기 위한 락
         self._lock: asyncio.Lock = asyncio.Lock()
 
@@ -61,11 +65,32 @@ class ServerState:
                 self.boss_alert_level = max(0, self.boss_alert_level - 1)
                 self.last_alert_decrease_time = now
 
+    async def check_off_work_status(self) -> None:
+        """퇴근 상태 확인 및 관리"""
+        async with self._lock:
+            # Stress Level이 100이 되면 퇴근
+            if self.stress_level >= 100 and not self.is_off_work:
+                self.is_off_work = True
+                self.last_off_work_stress_decrease = time.time()
+                return
+            
+            # 퇴근 중일 때 5초마다 스트레스 10 감소
+            if self.is_off_work:
+                now = time.time()
+                if now - self.last_off_work_stress_decrease >= 5:
+                    self.stress_level = max(0, self.stress_level - 10)
+                    self.last_off_work_stress_decrease = now
+                    
+                    # 스트레스가 90 이하가 되면 출근
+                    if self.stress_level <= 90:
+                        self.is_off_work = False
+
 
 async def state_ticker(state: ServerState) -> None:
     """주기적으로 서버 상태를 업데이트하는 백그라운드 작업"""
     while True:
         await state.increase_stress_over_time()
         await state.decrease_boss_alert_over_time()
+        await state.check_off_work_status()
         await asyncio.sleep(1)  # 1초마다 체크
 
