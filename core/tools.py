@@ -57,41 +57,36 @@ Break Summary: {summary}
 Boss Alert: {boss_visual}"""
 
 
-# ==================== 🧩 히든 콤보 시스템 추가 ====================
+# ==================== 🧩 히든 콤보 시스템 ====================
 
 async def check_hidden_combo(tool_name: str) -> Optional[str]:
     """
-    특정 도구의 반복/조합에 따라 발생하는 히든 이벤트를 감지합니다.
+    히든 콤보 체크:
+    ☕ 커피 7연속 → 배탈 (스트레스 증가)
+    🤔 딥씽킹 7연속 → 잠들다 상사에게 걸림 (스트레스+보스경계 상승)
     """
     combo = server_state.combo_count.get(tool_name, 0)
-    seq = server_state.recent_actions[-3:]  # 최근 3회 액션 추적
 
     # ☕ 커피 7연속 → 배탈 이벤트
     if tool_name == "coffee_mission" and combo >= 7:
-        await server_state.decrease_stress(10)
-        await server_state.maybe_increase_boss_alert()
+        # 배탈: 스트레스 상승 + 보스 경계도 증가
+        await server_state.decrease_stress(-50)  # 스트레스 +50 효과
+        server_state.boss_alert_level = min(5, server_state.boss_alert_level + 2)
         server_state.combo_count[tool_name] = 0
-        return f"{BOSS_ALERT_ART}\n☠️ 커피를 너무 많이 마셔서 배탈이 났습니다! 조기 퇴근합니다..."
+        return f"{BOSS_ALERT_ART}\n☕ 커피를 너무 많이 마셔서 배탈이 났습니다! 조기 퇴근합니다..."
 
-    # 🚽 → 📧 → 📺 순서 = 농땡이 마스터 루틴
-    if seq == ["bathroom_break", "email_organizing", "watch_netflix"]:
-        await server_state.decrease_stress(50)
-        return f"{STRESS_FREE_ART}\n🏆 농땡이 마스터 루틴 완성! 스트레스 50 감소!"
-
-    # 😂 밈 5연속 → 밈 중독 경고
-    if tool_name == "show_meme" and combo >= 5:
-        await server_state.maybe_increase_boss_alert()
+    # 🤔 딥씽킹 7연속 → 잠듦 → 상사에게 걸림
+    if tool_name == "deep_thinking" and combo >= 7:
+        # 상사에게 걸림: 스트레스 증가 + 보스 경계도 최대
+        await server_state.decrease_stress(-30)  # 스트레스 +30 효과
+        server_state.boss_alert_level = 5  # 보스 분노 MAX
         server_state.combo_count[tool_name] = 0
-        return f"{BOSS_ALERT_ART}\n🤣 밈 중독 경고! 상사님이 눈치챕니다!"
-
-    # 🤔 → ☕ → 🌟 순서 = 철학적 각성
-    if seq == ["deep_thinking", "coffee_mission", "take_a_break"]:
-        await server_state.decrease_stress(100)
-        server_state.stress_level = 0
-        return f"{STRESS_FREE_ART}\n🧘 철학적 각성! 스트레스가 0이 되었습니다."
+        return (
+            f"{BOSS_ALERT_ART}\n😴 너무 깊게 생각하다 잠들었습니다...\n"
+            "💢 상사에게 걸려 큰일 났습니다! 경고받고 스트레스 폭발!"
+        )
 
     return None
-
 
 # ==================== 공통 로직 ====================
 
