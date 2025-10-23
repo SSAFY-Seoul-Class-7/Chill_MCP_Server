@@ -12,7 +12,7 @@ from typing import Optional
 from fastmcp import FastMCP
 from core.server import ServerState
 from creative import get_full_response_message
-from creative.visuals import get_stress_bar, get_boss_alert_visual
+from creative.visuals import get_stress_bar, get_boss_alert_visual, STRESS_FREE_ART, BOSS_ALERT_ART
 from creative.asciiart import (
     NETFLIX_ASCII, ASCII_ART_MASTERPIECE, HELP_ASCII, COFFEE_ASCII,
     BATHROOM_ASCII, URGENT_CALL_ASCII, DEEP_THINKING_ASCII, EMAIL_ASCII,
@@ -45,13 +45,17 @@ def initialize_state(state: ServerState) -> None:
     global server_state
     server_state = state
 
+    # ✅ 히든 콤보 시스템용 필드 추가
+    server_state.recent_actions = []  # 최근 도구 실행 기록
+    server_state.combo_count = {}  # 도구별 연속 사용 횟수
+
 
 def format_response(tool_name: str, summary: str) -> str:
     """표준 응답 형식 생성"""
     creative_msg = get_full_response_message(tool_name, server_state.boss_alert_level)
     stress_bar = get_stress_bar(server_state.stress_level)
     boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
-    
+
     return f"""{creative_msg}
 
 Break Summary: {summary}
@@ -59,15 +63,48 @@ Break Summary: {summary}
 Boss Alert: {boss_visual}"""
 
 
+# ==================== 🧩 히든 콤보 시스템 ====================
+
+async def check_hidden_combo(tool_name: str) -> Optional[str]:
+    """
+    히든 콤보 체크:
+    ☕ 커피 7연속 → 배탈 (스트레스 증가)
+    🤔 딥씽킹 7연속 → 잠들다 상사에게 걸림 (스트레스+보스경계 상승)
+    """
+    combo = server_state.combo_count.get(tool_name, 0)
+
+    # ☕ 커피 7연속 → 배탈 이벤트
+    if tool_name == "coffee_mission" and combo >= 7:
+        # 배탈: 스트레스 상승 + 보스 경계도 증가
+        await server_state.decrease_stress(-50)  # 스트레스 +50 효과
+        server_state.boss_alert_level = min(5, server_state.boss_alert_level + 2)
+        server_state.combo_count[tool_name] = 0
+        return f"{BOSS_ALERT_ART}\n☕ 커피를 너무 많이 마셔서 배탈이 났습니다! 조기 퇴근합니다..."
+
+    # 🤔 딥씽킹 7연속 → 잠듦 → 상사에게 걸림
+    if tool_name == "deep_thinking" and combo >= 7:
+        # 상사에게 걸림: 스트레스 증가 + 보스 경계도 최대
+        await server_state.decrease_stress(-30)  # 스트레스 +30 효과
+        server_state.boss_alert_level = 5  # 보스 분노 MAX
+        server_state.combo_count[tool_name] = 0
+        return (
+            f"{BOSS_ALERT_ART}\n😴 너무 깊게 생각하다 잠들었습니다...\n"
+            "💢 상사에게 걸려 큰일 났습니다! 경고받고 스트레스 폭발!"
+        )
+
+    return None
+
+# ==================== 공통 로직 ====================
+
 async def execute_break_tool(tool_name: str, summary: str, stress_reduction: tuple = (10, 30)) -> str:
     """
     휴식 도구의 공통 로직을 실행
-    
+
     Args:
         tool_name: 도구 이름
         summary: Break Summary 내용
         stress_reduction: 스트레스 감소량 범위 (min, max)
-    
+
     Returns:
         포맷된 응답 문자열
     """
@@ -82,8 +119,29 @@ async def execute_break_tool(tool_name: str, summary: str, stress_reduction: tup
     # 3. Boss Alert Level 상승 확률 로직
     await server_state.maybe_increase_boss_alert()
 
-    # 4. 응답 생성 및 반환
-    return format_response(tool_name, summary)
+    # ✅ 4. 최근 실행 기록 추가
+    server_state.recent_actions.append(tool_name)
+    if len(server_state.recent_actions) > 10:
+        server_state.recent_actions.pop(0)
+
+    # ✅ 5. 콤보 카운트 갱신
+    if tool_name not in server_state.combo_count:
+        server_state.combo_count[tool_name] = 1
+    else:
+        server_state.combo_count[tool_name] += 1
+
+    # 다른 도구 콤보는 리셋
+    for k in list(server_state.combo_count.keys()):
+        if k != tool_name:
+            server_state.combo_count[k] = 0
+
+    # ✅ 6. 히든 콤보 감지
+    hidden_event = await check_hidden_combo(tool_name)
+    base_response = format_response(tool_name, summary)
+
+    if hidden_event:
+        return f"{base_response}\n\n{hidden_event}"
+    return base_response
 
 
 # ==================== 8개 필수 도구 ====================
