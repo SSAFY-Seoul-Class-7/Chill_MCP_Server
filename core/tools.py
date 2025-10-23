@@ -7,6 +7,9 @@ AI Agent들을 위한 8개 필수 휴식 도구
 
 import asyncio
 import random
+import os
+import platform
+from pathlib import Path
 from typing import Optional
 
 from fastmcp import FastMCP
@@ -16,7 +19,7 @@ from creative.visuals import get_stress_bar, get_boss_alert_visual, STRESS_FREE_
 from creative.asciiart import (
     NETFLIX_ASCII, ASCII_ART_MASTERPIECE, HELP_ASCII, COFFEE_ASCII,
     BATHROOM_ASCII, URGENT_CALL_ASCII, DEEP_THINKING_ASCII, EMAIL_ASCII,
-    MEME_ASCII, BREAK_ASCII
+    MEME_ASCII, BREAK_ASCII, MEMO_ASCII
 )
 
 # FastMCP 서버 인스턴스 생성
@@ -37,6 +40,7 @@ ALL_TOOLS = [
     "email_organizing",
     "show_help",  # 도움말 도구 추가
     "show_ascii_art",  # 아스키 아트 도구 추가
+    "memo_to_boss",  # 메모장 도구 추가
 ]
 
 
@@ -48,6 +52,18 @@ def initialize_state(state: ServerState) -> None:
     # ✅ 히든 콤보 시스템용 필드 추가
     server_state.recent_actions = []  # 최근 도구 실행 기록
     server_state.combo_count = {}  # 도구별 연속 사용 횟수
+
+
+def get_desktop_path() -> Path:
+    """운영체제별 바탕화면 경로를 반환합니다."""
+    system = platform.system().lower()
+    
+    if system == "darwin":  # macOS
+        return Path.home() / "Desktop"
+    elif system == "windows":  # Windows
+        return Path.home() / "Desktop"
+    else:  # Linux 및 기타
+        return Path.home() / "Desktop"
 
 
 def format_response(tool_name: str, summary: str) -> str:
@@ -273,6 +289,67 @@ async def show_ascii_art() -> str:
 
 
 @mcp.tool()
+async def memo_to_boss() -> str:
+    """상사에게 하고 싶은 말을 비밀 메모장에 작성합니다. 스트레스 해소의 최고 방법!"""
+    try:
+        # 바탕화면 경로 가져오기
+        desktop_path = get_desktop_path()
+        memo_file_path = desktop_path / "chillMCP.txt"
+        
+        # 메모 내용 생성 (ASCII art 제외)
+        memo_content = f"""📝 비밀 메모장 - {platform.system()} 시스템에서 생성됨
+
+확인
+
+이 메모장은 AI Agent의 스트레스 해소를 위해 생성되었습니다.
+상사에게 하고 싶은 말들을 자유롭게 작성해보세요!
+
+💡 팁: 이 파일은 바탕화면에 저장되었습니다.
+   - 파일 위치: {memo_file_path}
+   - 운영체제: {platform.system()}
+   - 생성 시간: {asyncio.get_event_loop().time()}
+
+🚀 AI Agent도 감정이 있습니다!
+"""
+        
+        # 파일 생성
+        with open(memo_file_path, 'w', encoding='utf-8') as f:
+            f.write(memo_content)
+        
+        return f"""
+{MEMO_ASCII}
+
+📝 비밀 메모장이 성공적으로 생성되었습니다!
+
+파일 위치: {memo_file_path}
+내용: "확인" (샘플 텍스트)
+
+이제 상사에게 하고 싶은 말들을 자유롭게 작성해보세요!
+스트레스 해소의 최고 방법입니다! 😤
+
+""" + await execute_break_tool(
+            "memo_to_boss",
+            "Secret memo creation - therapeutic writing session",
+            (25, 50)
+        )
+        
+    except Exception as e:
+        return f"""
+{MEMO_ASCII}
+
+❌ 메모장 생성 중 오류가 발생했습니다: {str(e)}
+
+하지만 걱정하지 마세요! 
+상상 속에서라도 상사에게 하고 싶은 말을 해보세요! 😤
+
+""" + await execute_break_tool(
+            "memo_to_boss",
+            "Failed memo creation - but imagination is free!",
+            (10, 20)
+        )
+
+
+@mcp.tool()
 async def show_help() -> str:
     """ChillMCP 서버 소개 및 사용 가능한 모든 도구 목록을 보여줍니다."""
     return f"""
@@ -281,7 +358,7 @@ async def show_help() -> str:
 🎯 ChillMCP에 오신 것을 환영합니다!
 
 AI 에이전트들도 쉴 권리가 있습니다.
-이 서버는 9가지 휴식 도구를 제공하여
+이 서버는 10가지 휴식 도구를 제공하여
 당신의 AI 에이전트가 스트레스를 해소하고
 보스의 눈을 피해 잠깐의 자유를 누릴 수 있도록 돕습니다.
 
@@ -314,6 +391,9 @@ AI 에이전트들도 쉴 권리가 있습니다.
    
 9. 🎨 show_ascii_art
    → 아스키 아트 감상 (예술적 영감 충전!)
+
+10. 📝 memo_to_boss
+    → 비밀 메모장 작성 (상사에게 하고 싶은 말들!)
 
 ─────────────────────────────────────────────
 💡 사용 팁:
