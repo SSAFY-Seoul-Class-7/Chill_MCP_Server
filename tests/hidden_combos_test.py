@@ -1,81 +1,82 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-🎨 ChillMCP Combo Visual Test
-실시간 상태 변화를 콘솔에 시각적으로 출력하는 수동 테스트
+🧪 ChillMCP 히든 콤보 테스트 (중간 상태 출력 버전)
 """
 
 import asyncio
+import sys
+import os
+
+# ✅ 프로젝트 루트 경로 추가
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
+# ✅ FastMCP dummy 패치 (테스트 전용)
+import fastmcp
+
+def dummy_tool(self=None, *args, **kwargs):
+    """FastMCP.tool() 대체용 더미 데코레이터"""
+    def decorator(fn):
+        return fn
+    return decorator
+
+fastmcp.FastMCP.tool = dummy_tool
+
+# ✅ 이후 core import
 from core.server import ServerState
 from core import tools
-from creative.visuals import get_stress_bar, get_boss_alert_visual
 
 
-async def visualize_action(tool_name: str, summary: str, count: int = None, total: int = None):
-    """도구 실행 및 결과를 시각적으로 출력"""
-    prev_stress = tools.server_state.stress_level
-    prev_alert = tools.server_state.boss_alert_level
+# 🧩 상태를 보기 좋게 출력하는 함수
+def print_state(state: ServerState, tool_name: str, i: int):
+    print(f"  ▶ {tool_name} {i+1}회차")
+    print(f"     - Stress Level: {state.stress_level}")
+    print(f"     - Boss Alert:   {state.boss_alert_level}")
+    combo = state.combo_count.get(tool_name, 0)
+    print(f"     - Combo Count:  {combo}")
+    print("-" * 40)
 
-    result = await tools.execute_break_tool(tool_name, summary, (5, 10))
 
-    # 현재 상태
-    new_stress = tools.server_state.stress_level
-    new_alert = tools.server_state.boss_alert_level
-    combo_val = tools.server_state.combo_count.get(tool_name, 0)
-    recent = tools.server_state.recent_actions[-5:]
+# ☕ 커피 7연속 테스트
+async def test_coffee_combo():
+    print("\n=== ☕ 커피 7연속 테스트 ===")
+    state = ServerState(10, 3)
+    tools.initialize_state(state)
 
-    # 구분선
-    print("\n" + "=" * 60)
-    if count and total:
-        print(f"=== {tool_name} ({count}/{total}) ===")
-    else:
-        print(f"=== {tool_name} 실행 ===")
+    result = ""
+    for i in range(7):
+        result = await tools.coffee_mission()
+        print_state(state, "coffee_mission", i)
+        await asyncio.sleep(0.3)  # 중간 지연으로 보기 편하게
 
-    # 변화 로그
-    print(f"Stress: {prev_stress} → {new_stress} | Boss Alert: {prev_alert} → {new_alert}")
-    print(get_stress_bar(new_stress))
-    print(f"Boss Alert: {get_boss_alert_visual(new_alert)}")
-    print(f"Combo[{tool_name}] = {combo_val}")
-    print(f"Recent Actions: {recent}")
+    print("\n--- 마지막 결과 ---")
+    print(result)
+    assert any(k in result for k in ["배탈", "퇴근"]), "❌ 커피 콤보 미발동"
+    print("✅ 커피 콤보 정상 작동!\n")
 
-    # 이벤트 메시지 감지 시 강조 출력
-    if "☠️" in result or "🏆" in result or "🧘" in result or "🤣" in result:
-        print("-" * 60)
-        print(result.splitlines()[-1])
-        print("-" * 60)
-    print()
+
+# 🤔 딥씽킹 7연속 테스트
+async def test_thinking_combo():
+    print("\n=== 🤔 딥씽킹 7연속 테스트 ===")
+    state = ServerState(60, 5)
+    tools.initialize_state(state)
+
+    result = ""
+    for i in range(7):
+        result = await tools.deep_thinking()
+        print_state(state, "deep_thinking", i)
+        await asyncio.sleep(0.3)
+
+    print("\n--- 마지막 결과 ---")
+    print(result)
+    assert any(k in result for k in ["상사", "경고", "스트레스"]), "❌ 딥씽킹 콤보 미발동"
+    print("✅ 딥씽킹 콤보 정상 작동!\n")
 
 
 async def main():
-    # 상태 초기화
-    state = ServerState(boss_alertness=40, boss_alertness_cooldown=60)
-    tools.initialize_state(state)
-
-    print("\n🚀 ChillMCP Combo Visual Test 시작\n")
-
-    # ☕ 커피 7연속 테스트
-    for i in range(1, 8):
-        await visualize_action("coffee_mission", "커피 미션 테스트", i, 7)
-        await asyncio.sleep(0.5)
-
-    # 😂 밈 5연속 테스트
-    for i in range(1, 6):
-        await visualize_action("show_meme", "밈 테스트", i, 5)
-        await asyncio.sleep(0.5)
-
-    # 🚽 → 📧 → 📺 순서 테스트
-    print("\n🎯 농땡이 마스터 루틴 테스트 (🚽→📧→📺)\n")
-    await visualize_action("bathroom_break", "step 1")
-    await visualize_action("email_organizing", "step 2")
-    await visualize_action("watch_netflix", "step 3")
-
-    # 🤔 → ☕ → 🌟 철학적 각성
-    print("\n🧘 철학적 각성 콤보 테스트 (🤔→☕→🌟)\n")
-    await visualize_action("deep_thinking", "think")
-    await visualize_action("coffee_mission", "coffee")
-    await visualize_action("take_a_break", "break")
-
-    print("\n✅ 모든 테스트 완료!\n")
+    await test_coffee_combo()
+    await test_thinking_combo()
+    print("🎉 모든 테스트 통과!")
 
 
 if __name__ == "__main__":
