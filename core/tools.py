@@ -178,6 +178,43 @@ async def email_organizing() -> str:
 
 
 @mcp.tool()
+async def set_stress_level(stress: int) -> str:
+    """테스트용 도구: 스트레스 레벨을 직접 설정합니다 (0-100)"""
+    if not (0 <= stress <= 100):
+        return "Error: stress must be between 0 and 100"
+    
+    async with server_state._lock:
+        server_state.stress_level = stress
+    
+    stress_bar = get_stress_bar(server_state.stress_level)
+    boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
+    
+    return f"""🔧 테스트 모드: 스트레스 레벨 설정 완료
+
+Break Summary: Stress level set to {stress} for testing
+{stress_bar}
+Boss Alert: {boss_visual}"""
+
+
+@mcp.tool()
+async def get_status() -> str:
+    """현재 AI 에이전트의 상태를 조회합니다 (스트레스 감소 없음)"""
+    # 퇴근 상태 확인 (스트레스 변경 없이 상태만 업데이트)
+    await server_state.check_off_work_status()
+    
+    stress_bar = get_stress_bar(server_state.stress_level)
+    boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
+    
+    status_msg = "🏠 퇴근 중" if server_state.is_off_work else "💼 근무 중"
+    
+    return f"""📊 현재 상태: {status_msg}
+
+Break Summary: Status check - no stress change
+{stress_bar}
+Boss Alert: {boss_visual}"""
+
+
+@mcp.tool()
 async def show_help() -> str:
     """ChillMCP 서버 소개 및 사용 가능한 모든 도구 목록을 보여줍니다."""
     # 퇴근 상태 확인
