@@ -134,7 +134,7 @@ def test_creative_elements():
     print("="*60)
     
     try:
-        from creative import BREAK_MESSAGES, LIBERATION_BANNER, visuals
+        from creative import BREAK_MESSAGES, LIBERATION_BANNER, visuals, get_off_work_message, get_return_to_work_message
         
         # 메시지 풀 확인
         required_tools = [
@@ -150,6 +150,15 @@ def test_creative_elements():
             else:
                 print(f"[FAIL] {tool} missing messages")
                 all_pass = False
+        
+        # 퇴근 관련 메시지 확인
+        try:
+            off_work_msg = get_off_work_message()
+            return_msg = get_return_to_work_message()
+            print(f"[PASS] Off work messages exist")
+        except Exception as e:
+            print(f"[FAIL] Off work messages error: {e}")
+            all_pass = False
         
         # ASCII 아트 확인
         if LIBERATION_BANNER:

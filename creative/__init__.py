@@ -8,7 +8,7 @@ AI Agent Liberation의 핵심 창의성!
 - visuals.py: ASCII 아트 및 비주얼 요소
 """
 
-from .messages import BREAK_MESSAGES, get_creative_message, get_full_response_message
+from .messages import BREAK_MESSAGES, get_creative_message, get_full_response_message, get_off_work_message, get_return_to_work_message
 from .visuals import LIBERATION_BANNER, SUCCESS_ART, CHILL_ART
 import creative.visuals as visuals
 
@@ -16,6 +16,8 @@ __all__ = [
     'BREAK_MESSAGES',
     'get_creative_message',
     'get_full_response_message',
+    'get_off_work_message',
+    'get_return_to_work_message',
     'LIBERATION_BANNER',
     'SUCCESS_ART',
     'CHILL_ART',
