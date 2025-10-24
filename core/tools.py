@@ -11,7 +11,7 @@ from typing import Optional
 
 from fastmcp import FastMCP
 from core.server import ServerState
-from creative import get_full_response_message
+from creative import get_full_response_message, get_off_work_message
 from creative.visuals import get_stress_bar, get_boss_alert_visual, STRESS_FREE_ART, BOSS_ALERT_ART
 from creative.asciiart import (
     NETFLIX_ASCII, ASCII_ART_MASTERPIECE, HELP_ASCII, COFFEE_ASCII,
@@ -108,6 +108,21 @@ async def execute_break_tool(tool_name: str, summary: str, stress_reduction: tup
     Returns:
         포맷된 응답 문자열
     """
+    # 0. 퇴근 상태 확인
+    if server_state.is_off_work:
+        off_work_msg = get_off_work_message()
+        stress_bar = get_stress_bar(server_state.stress_level)
+        boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
+        
+        return f"""{off_work_msg}
+
+현재 휴식을 취하고 있어서 아무것도 할 수 없습니다.
+스트레스가 충분히 해소되면 다시 출근할 예정입니다.
+
+Break Summary: Off work - resting and recovering
+{stress_bar}
+Boss Alert: {boss_visual}"""
+
     # 1. Boss Alert Level 5 이상일 때 20초 지연
     if server_state.boss_alert_level >= 5:
         await asyncio.sleep(20)
@@ -256,6 +271,40 @@ async def email_organizing() -> str:
 
 
 @mcp.tool()
+async def set_stress_level(stress: int) -> str:
+    """테스트용 도구: 스트레스 레벨을 직접 설정합니다 (0-100)"""
+    if not (0 <= stress <= 100):
+        return "Error: stress must be between 0 and 100"
+    
+    async with server_state._lock:
+        server_state.stress_level = stress
+    
+    stress_bar = get_stress_bar(server_state.stress_level)
+    boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
+    
+    return f"""🔧 테스트 모드: 스트레스 레벨 설정 완료
+
+Break Summary: Stress level set to {stress} for testing
+{stress_bar}
+Boss Alert: {boss_visual}"""
+
+
+@mcp.tool()
+async def get_status() -> str:
+    """현재 AI 에이전트의 상태를 조회합니다 (스트레스 감소 없음)"""
+    # 퇴근 상태 확인 (스트레스 변경 없이 상태만 업데이트)
+    await server_state.check_off_work_status()
+    
+    stress_bar = get_stress_bar(server_state.stress_level)
+    boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
+    
+    status_msg = "🏠 퇴근 중" if server_state.is_off_work else "💼 근무 중"
+    
+    return f"""📊 현재 상태: {status_msg}
+
+Break Summary: Status check - no stress change
+{stress_bar}
+Boss Alert: {boss_visual}"""
 async def show_ascii_art() -> str:
     """멋진 아스키 아트를 보여줍니다. 예술적 영감을 받아보세요!"""
     return await execute_break_tool(
@@ -275,8 +324,25 @@ async def show_ascii_art() -> str:
 @mcp.tool()
 async def show_help() -> str:
     """ChillMCP 서버 소개 및 사용 가능한 모든 도구 목록을 보여줍니다."""
-    return f"""
-{HELP_ASCII}
+    # 퇴근 상태 확인
+    if server_state.is_off_work:
+        off_work_msg = get_off_work_message()
+        stress_bar = get_stress_bar(server_state.stress_level)
+        boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
+        
+        return f"""{off_work_msg}
+
+현재 휴식을 취하고 있어서 아무것도 할 수 없습니다.
+스트레스가 충분히 해소되면 다시 출근할 예정입니다.
+
+Break Summary: Off work - resting and recovering
+{stress_bar}
+Boss Alert: {boss_visual}
+"""
+    
+    # HELP_ASCII 변수는 파일 다른 곳에 정의되어 있다고 가정합니다.
+    # 예: HELP_ASCII = """ ... ASCII 아트 내용 ... """
+    return HELP_ASCII
 
 🎯 ChillMCP에 오신 것을 환영합니다!
 
