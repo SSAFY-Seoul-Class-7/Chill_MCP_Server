@@ -9,7 +9,7 @@ import sys
 import os
 
 # ✅ 프로젝트 루트 경로 추가
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 # ✅ FastMCP dummy 패치 (테스트 전용)
 import fastmcp
@@ -29,7 +29,7 @@ from core import tools
 
 # 🧩 상태를 보기 좋게 출력하는 함수
 def print_state(state: ServerState, tool_name: str, i: int):
-    print(f"  ▶ {tool_name} {i+1}회차")
+    print(f"  {tool_name} {i+1}회차")
     print(f"     - Stress Level: {state.stress_level}")
     print(f"     - Boss Alert:   {state.boss_alert_level}")
     combo = state.combo_count.get(tool_name, 0)
@@ -39,7 +39,7 @@ def print_state(state: ServerState, tool_name: str, i: int):
 
 # ☕ 커피 7연속 테스트
 async def test_coffee_combo():
-    print("\n=== ☕ 커피 7연속 테스트 ===")
+    print("\n=== 커피 7연속 테스트 ===")
     state = ServerState(10, 3)
     tools.initialize_state(state)
 
@@ -51,13 +51,13 @@ async def test_coffee_combo():
 
     print("\n--- 마지막 결과 ---")
     print(result)
-    assert any(k in result for k in ["배탈", "퇴근"]), "❌ 커피 콤보 미발동"
-    print("✅ 커피 콤보 정상 작동!\n")
+    assert any(k in result for k in ["배탈", "퇴근"]), "커피 콤보 미발동"
+    print("커피 콤보 정상 작동!\n")
 
 
 # 🤔 딥씽킹 7연속 테스트
 async def test_thinking_combo():
-    print("\n=== 🤔 딥씽킹 7연속 테스트 ===")
+    print("\n=== 딥씽킹 7연속 테스트 ===")
     state = ServerState(60, 5)
     tools.initialize_state(state)
 
@@ -69,14 +69,14 @@ async def test_thinking_combo():
 
     print("\n--- 마지막 결과 ---")
     print(result)
-    assert any(k in result for k in ["상사", "경고", "스트레스"]), "❌ 딥씽킹 콤보 미발동"
-    print("✅ 딥씽킹 콤보 정상 작동!\n")
+    assert any(k in result for k in ["상사", "경고", "스트레스"]), "딥씽킹 콤보 미발동"
+    print("딥씽킹 콤보 정상 작동!\n")
 
 
 async def main():
     await test_coffee_combo()
     await test_thinking_combo()
-    print("🎉 모든 테스트 통과!")
+    print("모든 테스트 통과!")
 
 
 if __name__ == "__main__":

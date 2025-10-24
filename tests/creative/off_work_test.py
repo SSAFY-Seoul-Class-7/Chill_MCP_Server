@@ -14,7 +14,7 @@ import re
 
 def get_python():
     """가상환경 Python 경로"""
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     venv = os.path.join(root, "venv", "Scripts", "python.exe")
     return venv if os.path.exists(venv) else sys.executable
 
@@ -29,8 +29,10 @@ class OffWorkTester:
         """서버 시작"""
         try:
             python_path = get_python()
+            root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            main_py = os.path.join(root_dir, "main.py")
             self.server = subprocess.Popen(
-                [python_path, "main.py", "--boss_alertness", "0", "--boss_alertness_cooldown", "300"],
+                [python_path, main_py, "--boss_alertness", "0", "--boss_alertness_cooldown", "300"],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -38,7 +40,7 @@ class OffWorkTester:
                 encoding='utf-8',
                 errors='replace',
                 bufsize=1,
-                cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                cwd=root_dir
             )
             time.sleep(3)
             
@@ -130,8 +132,8 @@ class OffWorkTester:
         stress_level_match = re.search(r"Stress Level:\s*(\d+)", text)
         
         boss_match = re.search(r"Boss Alert:\s*([^\n]+)", text)
-        # 퇴근 상태 확인: "Off work", "퇴근 중", "🏠 퇴근 중" 등
-        off_work_match = re.search(r"(Off work|퇴근 중|🏠 퇴근)", text)
+        # 퇴근 상태 확인: "Off work", "퇴근 중" 등
+        off_work_match = re.search(r"(Off work|퇴근 중)", text)
         
         stress_level = None
         if stress_bar_match:

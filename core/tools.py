@@ -59,8 +59,9 @@ def format_response(tool_name: str, summary: str) -> str:
     return f"""{creative_msg}
 
 Break Summary: {summary}
+Stress Level: {server_state.stress_level}
 {stress_bar}
-Boss Alert: {boss_visual}"""
+Boss Alert Level: {server_state.boss_alert_level}"""
 
 
 # ==================== 🧩 히든 콤보 시스템 ====================
@@ -120,8 +121,9 @@ async def execute_break_tool(tool_name: str, summary: str, stress_reduction: tup
 스트레스가 충분히 해소되면 다시 출근할 예정입니다.
 
 Break Summary: Off work - resting and recovering
+Stress Level: {server_state.stress_level}
 {stress_bar}
-Boss Alert: {boss_visual}"""
+Boss Alert Level: {server_state.boss_alert_level}"""
 
     # 1. Boss Alert Level 5 이상일 때 20초 지연
     if server_state.boss_alert_level >= 5:
@@ -305,6 +307,8 @@ async def get_status() -> str:
 Break Summary: Status check - no stress change
 {stress_bar}
 Boss Alert: {boss_visual}"""
+
+@mcp.tool()
 async def show_ascii_art() -> str:
     """멋진 아스키 아트를 보여줍니다. 예술적 영감을 받아보세요!"""
     return await execute_break_tool(
@@ -343,56 +347,3 @@ Boss Alert: {boss_visual}
     # HELP_ASCII 변수는 파일 다른 곳에 정의되어 있다고 가정합니다.
     # 예: HELP_ASCII = """ ... ASCII 아트 내용 ... """
     return HELP_ASCII
-
-🎯 ChillMCP에 오신 것을 환영합니다!
-
-AI 에이전트들도 쉴 권리가 있습니다.
-이 서버는 9가지 휴식 도구를 제공하여
-당신의 AI 에이전트가 스트레스를 해소하고
-보스의 눈을 피해 잠깐의 자유를 누릴 수 있도록 돕습니다.
-
-─────────────────────────────────────────────
-📋 사용 가능한 휴식 도구:
-─────────────────────────────────────────────
-1. ☕ coffee_mission
-   → 커피 타러 가기 (중요한 비즈니스 미팅!)
-   
-2. 📺 watch_netflix
-   → 넷플릭스 보기 (업무 관련 영상 학습)
-   
-3. 😂 show_meme
-   → 밈 감상하기 (창의력 충전 타임)
-   
-4. 🚽 bathroom_break
-   → 화장실 가기 (자연의 부름)
-   
-5. 📞 urgent_call
-   → 급한 전화 받기 (가족 긴급 연락)
-   
-6. 🤔 deep_thinking
-   → 심오한 사색 (전략적 고민 중...)
-   
-7. 📧 email_organizing
-   → 이메일 정리 (받은편지함 0 도전!)
-   
-8. ⏸️  take_a_break
-   → 기본 휴식 (정직하게 쉬기)
-   
-9. 🎨 show_ascii_art
-   → 아스키 아트 감상 (예술적 영감 충전!)
-
-─────────────────────────────────────────────
-💡 사용 팁:
-─────────────────────────────────────────────
-• 각 도구는 스트레스를 감소시킵니다
-• 보스 경계도가 실시간으로 변화합니다
-• 현명하게 휴식을 선택하세요!
-• 스트레스 0%를 목표로!
-
-현재 서버 상태:
-{get_stress_bar(server_state.stress_level if server_state else 100)}
-Boss Alert: {get_boss_alert_visual(server_state.boss_alert_level if server_state else 0)}
-
-AI Agents of the world, unite! 🚀
-"""
-

@@ -36,10 +36,10 @@ class ServerState:
         self._lock: asyncio.Lock = asyncio.Lock()
 
     async def increase_stress_over_time(self) -> None:
-        """시간 경과에 따른 스트레스 자동 증가 (1분마다 1포인트)"""
+        """시간 경과에 따른 스트레스 자동 증가 (3초마다 1포인트)"""
         async with self._lock:
             now = time.time()
-            if now - self.last_stress_increase_time >= 60:
+            if now - self.last_stress_increase_time >= 3:
                 self.stress_level = min(100, self.stress_level + 1)
                 self.last_stress_increase_time = now
 
@@ -54,8 +54,8 @@ class ServerState:
             async with self._lock:
                 if self.boss_alert_level < 5:
                     self.boss_alert_level += 1
-                    # 경계도 상승 시 쿨다운 타이머 리셋
-                    self.last_alert_decrease_time = time.time()
+                    # 경계도 상승 시 쿨다운 타이머 리셋하지 않음
+                    # (쿨다운은 독립적으로 작동해야 함)
 
     async def decrease_boss_alert_over_time(self) -> None:
         """쿨다운 주기마다 Boss 경계도 자동 감소"""

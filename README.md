@@ -54,11 +54,25 @@ skai/
 │
 ├── tests/                     # ✅ 테스트 모듈
 │   ├── __init__.py
-│   ├── official_validation.py # 🏆 공식 검증 테스트
-│   ├── chat_test.py          # 대화형 테스트 🎮
-│   ├── fast_test.py          # 빠른 검증 (10초)
-│   ├── full_test.py          # 완전한 MCP 테스트
-│   └── basic_test.py         # 기본 기능 테스트
+│   ├── basic/                 # 기본 테스트 패키지
+│   │   ├── __init__.py
+│   │   ├── unified_test.py    # 통합 테스트 (기본+빠른+종합)
+│   │   └── chat_test.py       # 대화형 테스트 🎮
+│   ├── creative/              # 창의적 테스트 패키지
+│   │   ├── __init__.py
+│   │   ├── hidden_combos_test.py # 히든 콤보 테스트
+│   │   └── off_work_test.py   # 퇴근 기능 테스트 🏠
+│   └── official_validation/   # 공식 검증 테스트 패키지
+│       ├── __init__.py
+│       ├── base_validator.py  # 공통 검증 로직
+│       ├── test_1_command_line_parameters.py
+│       ├── test_2_continuous_break.py
+│       ├── test_3_stress_accumulation.py
+│       ├── test_4_delay_when_boss_alert_5.py
+│       ├── test_5_response_parsing.py
+│       ├── test_6_cooldown.py
+│       ├── run_all_tests.py   # 모든 공식 테스트 실행
+│       └── README.md          # 공식 테스트 가이드
 │
 └── requirements.txt
 ```
@@ -84,11 +98,21 @@ skai/
 
 #### **tests/** - 테스트 모듈
 
-- `official_validation.py`: 🏆 해커톤 공식 검증 테스트 (6개 필수 시나리오)
-- `chat_test.py`: 대화형 테스트 (실시간 수동 테스트)
-- `fast_test.py`: 10초 빠른 검증
-- `full_test.py`: 완전한 MCP 프로토콜 테스트
-- `basic_test.py`: 기본 기능 테스트
+- **basic/**: 기본 테스트 패키지
+  - `unified_test.py`: 통합 테스트 (기본+빠른+종합 기능을 하나로 통합)
+  - `chat_test.py`: 대화형 테스트 (실시간 수동 테스트)
+- **creative/**: 창의적 테스트 패키지
+  - `hidden_combos_test.py`: 히든 콤보 시스템 테스트 (커피 7연속, 딥씽킹 7연속)
+  - `off_work_test.py`: 퇴근 기능 테스트 (Stress Level 100 → 퇴근 → 자동 복귀)
+- **official_validation/**: 공식 검증 테스트 패키지
+  - `base_validator.py`: 공통 검증 로직 및 헬퍼 함수
+  - `test_1_command_line_parameters.py`: 커맨드라인 파라미터 검증
+  - `test_2_continuous_break.py`: 연속 휴식 테스트
+  - `test_3_stress_accumulation.py`: 스트레스 누적 테스트
+  - `test_4_delay_when_boss_alert_5.py`: Boss Alert Level 5 지연 테스트
+  - `test_5_response_parsing.py`: 응답 파싱 테스트
+  - `test_6_cooldown.py`: 쿨다운 메커니즘 테스트
+  - `run_all_tests.py`: 모든 공식 테스트 실행
 
 ## 🚀 설치 및 실행
 
@@ -151,22 +175,42 @@ python main.py --boss_alertness 50 --boss_alertness_cooldown 300
 
 ## 🧪 테스트
 
-### 공식 검증 테스트 요소 🏆
+### 통합 테스트 (권장) 🚀
 
 ```bash
-python tests/official_validation.py
+python tests/basic/unified_test.py
 ```
 
-**해커톤 공식 검증 기준**에 따른 종합 테스트입니다.
+**모든 핵심 기능을 한 번에 검증!** 기본, 빠른, 종합 테스트를 통합한 완전한 테스트입니다.
 
-- ✅ 6개 필수 시나리오 자동 검증
-- ✅ 커맨드라인 파라미터 미지원 시 즉시 실격 판정
-- ✅ 모든 요구사항 충족 여부 확인
+- ✅ 파일 구조 검증
+- ✅ 서버 시작/종료 테스트
+- ✅ MCP 프로토콜 통신 테스트
+- ✅ 모든 도구 목록 및 실행 테스트
+- ✅ 응답 파싱 테스트 (정규표현식)
+- ✅ 100% 성공률 달성!
 
-### 대화형 테스트 (수동 테스트) 🎮
+### 공식 검증 테스트 🏆
 
 ```bash
-python tests/chat_test.py
+# 모든 공식 테스트 실행
+python tests/official_validation/run_all_tests.py
+
+# 개별 테스트 실행
+python tests/official_validation/test_1_command_line_parameters.py
+python tests/official_validation/test_2_continuous_break.py
+python tests/official_validation/test_3_stress_accumulation.py
+python tests/official_validation/test_4_delay_when_boss_alert_5.py
+python tests/official_validation/test_5_response_parsing.py
+python tests/official_validation/test_6_cooldown.py
+```
+
+**해커톤 공식 검증 기준**에 따른 6개 필수 시나리오를 개별적으로 검증할 수 있습니다.
+
+### 대화형 테스트 🎮
+
+```bash
+python tests/basic/chat_test.py
 ```
 
 **실시간 대화형 테스트!** 직접 명령어를 입력하며 서버를 테스트할 수 있습니다.
@@ -179,32 +223,29 @@ python tests/chat_test.py
 > quit          - 종료
 ```
 
-### 빠른 테스트 (자동 검증)
+### 창의적 기능 테스트 🎨
+
+#### 히든 콤보 테스트
 
 ```bash
-python tests/fast_test.py
+python tests/creative/hidden_combos_test.py
 ```
 
-**10초 안에 완료!** 모든 핵심 기능 자동 검증
+**히든 콤보 시스템 테스트!** 특정 도구를 연속으로 사용할 때 발생하는 특별한 효과를 검증합니다.
 
-### 전체 테스트
+- ✅ 커피 7연속: 배탈로 조기 퇴근
+- ✅ 딥씽킹 7연속: 상사에게 걸려 경고
+
+#### 퇴근 기능 테스트
 
 ```bash
-python tests/full_test.py
+python tests/creative/off_work_test.py
 ```
 
-완전한 MCP 프로토콜 통신 테스트 (2-3분 소요)
-
-### 퇴근 기능 테스트 🏠
-
-```bash
-python tests/off_work_test.py
-```
-
-**새로운 퇴근 기능 테스트!** Stress Level 100 도달 시 퇴근 및 자동 복귀 검증
+**퇴근 시스템 테스트!** Stress Level 100 도달 시 퇴근 및 자동 복귀 메커니즘을 검증합니다.
 
 - ✅ Stress Level 100 도달 시 자동 퇴근
-- ✅ 퇴근 중 스트레스 자동 감소 (5초마다 10포인트)
+- ✅ 퇴근 중 스트레스 자동 감소 (3초마다 10포인트)
 - ✅ 스트레스 90 이하 시 자동 출근
 
 ### 서버 실행 확인
@@ -241,6 +282,7 @@ python tests/off_work_test.py
   - **100 도달 시 자동 퇴근** 🏠
 
 - **Boss Alert Level** (0-5): Boss의 현재 의심 정도
+
   - 휴식 도구 사용 시 확률적으로 증가
   - 지정된 쿨다운 주기마다 1포인트씩 자동 감소
   - Level 5 도달 시 도구 호출에 20초 지연 발생
@@ -446,14 +488,14 @@ BOSS_ALERT_COMMENTS = {
 
 ```bash
 # 해커톤 공식 검증 기준에 따른 종합 테스트
-python tests/official_validation.py
+python tests/official_validation/run_all_tests.py
 ```
 
 **모든 필수 시나리오를 자동으로 검증합니다:**
 
 - ✅ 커맨드라인 파라미터 인식
 - ✅ Boss Alert Level 상승 메커니즘
-- ✅ 스트레스 시간 증가
+- ✅ 스트레스 시간 증가 (3초마다 1포인트)
 - ✅ 20초 지연 동작
 - ✅ 응답 형식 정규표현식 파싱
 - ✅ Cooldown 주기별 자동 감소
