@@ -97,17 +97,18 @@ class SimpleTester:
         print("\n도구 호출:")
         print("  help          - 서버 소개 및 상세 도움말")
         print("  list          - 전체 도구 목록 조회")
-        print("\n휴식 도구:")
-        print("  coffee        - 커피 타러 가기")
-        print("  netflix       - 넷플릭스 보기")
-        print("  meme          - 밈 감상하기")
-        print("  bathroom      - 화장실 가기")
-        print("  call          - 급한 전화 받기")
-        print("  think         - 심오한 사색")
-        print("  email         - 이메일 정리")
-        print("  break         - 기본 휴식")
-        print("  ascii         - 아스키 아트 감상")
-        print("\n기타:")
+        print("\n🎮 휴식 도구:")
+        print("  coffee        - ☕ 커피 타러 가기")
+        print("  netflix       - 📺 넷플릭스 보기")
+        print("  meme          - 😂 밈 감상하기")
+        print("  bathroom      - 🚽 화장실 가기")
+        print("  call          - 📞 급한 전화 받기")
+        print("  think         - 🤔 심오한 사색")
+        print("  email         - 📧 이메일 정리")
+        print("  break         - ⏸️  기본 휴식")
+        print("  ascii         - 🎨 아스키 아트 감상")
+        print("  memo          - 📝 비밀 메모장 작성")
+        print("\n⚙️  기타:")
         print("  quit / exit   - 종료")
         print("="*60 + "\n")
         
@@ -195,6 +196,7 @@ class SimpleTester:
             "email": "email_organizing",
             "break": "take_a_break",
             "ascii": "show_ascii_art",  # 아스키 아트 도구 추가
+            "memo": "memo_to_boss",  # 메모장 도구 추가
             "help": "show_help",  # 서버의 help 도구 호출
         }
         

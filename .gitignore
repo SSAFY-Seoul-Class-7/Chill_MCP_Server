@@ -27,3 +27,6 @@ Thumbs.db
 *.log
 .pytest_cache/
 
+
+#memo gitignore
+memos/
