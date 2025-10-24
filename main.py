@@ -39,7 +39,15 @@ def main():
     # 4. 이벤트 루프 및 백그라운드 작업 시작
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.create_task(state_ticker(server_state))
+    
+    # 백그라운드 태스크를 별도 스레드에서 실행
+    import threading
+    def run_state_ticker():
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(state_ticker(server_state))
+    
+    ticker_thread = threading.Thread(target=run_state_ticker, daemon=True)
+    ticker_thread.start()
     
     # 5. FastMCP 서버 실행 (stdio transport)
     mcp.run()

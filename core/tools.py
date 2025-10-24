@@ -76,8 +76,10 @@ def format_response(tool_name: str, summary: str) -> str:
 
 Break Summary: {summary}
 Stress Level: {server_state.stress_level}
-{stress_bar}
-Boss Alert Level: {server_state.boss_alert_level}"""
+Boss Alert Level: {server_state.boss_alert_level}
+
+[Stress Bar]
+{stress_bar}"""
 
 
 # ==================== 🧩 히든 콤보 시스템 ====================
@@ -138,8 +140,10 @@ async def execute_break_tool(tool_name: str, summary: str, stress_reduction: tup
 
 Break Summary: Off work - resting and recovering
 Stress Level: {server_state.stress_level}
-{stress_bar}
-Boss Alert Level: {server_state.boss_alert_level}"""
+Boss Alert Level: {server_state.boss_alert_level}
+
+[Stress Bar]
+{stress_bar}"""
 
     # 1. Boss Alert Level 5 이상일 때 20초 지연
     if server_state.boss_alert_level >= 5:
@@ -423,8 +427,20 @@ async def show_help() -> str:
 스트레스가 충분히 해소되면 다시 출근할 예정입니다.
 
 Break Summary: Off work - resting and recovering
+Stress Level: {server_state.stress_level}
+Boss Alert Level: {server_state.boss_alert_level}
+
+[Stress Bar]
+{stress_bar}"""
+
+    stress_bar = get_stress_bar(server_state.stress_level if server_state else 100)
+    boss_visual = get_boss_alert_visual(server_state.boss_alert_level if server_state else 0)
+    
+    return f"""{HELP_ASCII}
+
+현재 서버 상태:
 {stress_bar}
 Boss Alert: {boss_visual}
-"""
 
-    return HELP_ASCII
+AI Agents of the world, unite! 🚀
+"""

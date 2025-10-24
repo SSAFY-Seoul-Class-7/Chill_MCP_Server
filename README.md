@@ -223,6 +223,22 @@ python tests/basic/chat_test.py
 > quit          - 종료
 ```
 
+### 비동기 실행 테스트 ⚡
+
+```bash
+python tests/basic/async_test.py
+```
+
+**백그라운드 스트레스 증가 및 상태 관리 시스템 검증!** 멀티스레딩 아키텍처의 정상 작동을 확인합니다.
+
+**테스트 항목:**
+
+- ✅ 초기 상태 확인 (스트레스 레벨 50)
+- ✅ 백그라운드 스트레스 증가 (3초마다 +1)
+- ✅ 도구 사용 후 스트레스 감소
+- ✅ 연속 도구 사용 시 스트레스 변화
+- ✅ 보스 경계도 변화 확인
+
 ### 창의적 기능 테스트 🎨
 
 #### 히든 콤보 테스트
@@ -277,9 +293,39 @@ python tests/creative/off_work_test.py
 
 - **Stress Level** (0-100): AI Agent의 현재 스트레스 수준
 
-  - 1분마다 1포인트씩 자동 증가
+  - **3초마다 1포인트씩 자동 증가** (백그라운드 실행)
   - 휴식 도구 사용 시 랜덤 감소
   - **100 도달 시 자동 퇴근** 🏠
+
+#### 🔧 백그라운드 스트레스 증가 아키텍처
+
+서버는 **멀티스레딩**을 통해 실시간 상태 관리를 구현합니다:
+
+```python
+# 메인 스레드: MCP 프로토콜 처리
+mcp.run()  # stdio 기반 MCP 서버 (블로킹)
+
+# 백그라운드 스레드: 상태 관리
+def run_state_ticker():
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(state_ticker(server_state))
+
+ticker_thread = threading.Thread(target=run_state_ticker, daemon=True)
+ticker_thread.start()
+```
+
+**작동 원리:**
+
+- **메인 스레드**: `mcp.run()`이 MCP 프로토콜을 처리 (stdio 블로킹)
+- **백그라운드 스레드**: `state_ticker`가 1초마다 실행되어:
+  - 3초마다 스트레스 +1 증가
+  - 보스 경계도 감소 (쿨다운)
+  - 퇴근 상태 체크
+
+**이전 문제점:**
+
+- `mcp.run()`이 메인 스레드를 블로킹하여 `state_ticker`가 실행되지 않음
+- **해결**: 별도 스레드에서 이벤트 루프를 실행하여 백그라운드 작업 보장
 
 - **Boss Alert Level** (0-5): Boss의 현재 의심 정도
 

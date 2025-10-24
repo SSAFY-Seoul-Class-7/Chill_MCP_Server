@@ -13,7 +13,7 @@ import threading
 
 def get_root_dir():
     """프로젝트 루트 디렉토리"""
-    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def get_python():
     root = get_root_dir()
