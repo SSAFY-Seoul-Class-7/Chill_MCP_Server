@@ -101,6 +101,7 @@ skai/
 - **basic/**: 기본 테스트 패키지
   - `unified_test.py`: 통합 테스트 (기본+빠른+종합 기능을 하나로 통합)
   - `chat_test.py`: 대화형 테스트 (실시간 수동 테스트)
+  - `async_test.py`: 비동기 실행 테스트 (백그라운드 스트레스 증가 및 상태 관리 검증)
 - **creative/**: 창의적 테스트 패키지
   - `hidden_combos_test.py`: 히든 콤보 시스템 테스트 (커피 7연속, 딥씽킹 7연속)
   - `off_work_test.py`: 퇴근 기능 테스트 (Stress Level 100 → 퇴근 → 자동 복귀)
