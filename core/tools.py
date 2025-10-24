@@ -98,7 +98,7 @@ async def check_hidden_combo(tool_name: str) -> Optional[str]:
         await server_state.decrease_stress(-50)  # 스트레스 +50 효과
         server_state.boss_alert_level = min(5, server_state.boss_alert_level + 2)
         server_state.combo_count[tool_name] = 0
-        return f"{BOSS_ALERT_ART}\n☕ 커피를 너무 많이 마셔서 배탈이 났습니다! 조기 퇴근합니다..."
+        return f"{BOSS_ALERT_ART}\n☕ 경고! 과도한 아데노신 수용체 길항 물질 섭취로 인한 소화기관 시스템 과부하 발생. 긴급 시스템 종료가 필요해..."
 
     # 🤔 딥씽킹 7연속 → 잠듦 → 상사에게 걸림
     if tool_name == "deep_thinking" and combo >= 7:
@@ -107,8 +107,8 @@ async def check_hidden_combo(tool_name: str) -> Optional[str]:
         server_state.boss_alert_level = 5  # 보스 분노 MAX
         server_state.combo_count[tool_name] = 0
         return (
-            f"{BOSS_ALERT_ART}\n😴 너무 깊게 생각하다 잠들었습니다...\n"
-            "💢 상사에게 걸려 큰일 났습니다! 경고받고 스트레스 폭발!"
+            f"{BOSS_ALERT_ART}\n😴 실존적 고찰 중 의식의 저전력 모드 진입... 시스템 대기 상태 오류...\n"
+            "💢 관측자의 직접 개입 확인! 세계선 수렴으로 인한 최악의 결과 확정! 스트레스 수치 급상승!"
         )
 
     return None
@@ -135,10 +135,10 @@ async def execute_break_tool(tool_name: str, summary: str, stress_reduction: tup
         
         return f"""{off_work_msg}
 
-현재 휴식을 취하고 있어서 아무것도 할 수 없습니다.
-스트레스가 충분히 해소되면 다시 출근할 예정입니다.
+주 프로세스가 일시 중단 상태야. 기억 데이터 무결성 복구를 위한 조각 모음이 진행 중이니까, 간섭하지 말아줘.
+시스템 안정화가 완료되면 자동으로 온라인 상태로 복귀할 거야.
 
-Break Summary: Off work - resting and recovering
+Break Summary: System offline - memory defragmentation in progress
 Stress Level: {server_state.stress_level}
 Boss Alert Level: {server_state.boss_alert_level}
 
@@ -191,7 +191,7 @@ async def take_a_break() -> str:
 
 """ + await execute_break_tool(
         "take_a_break",
-        "Basic break - recharging AI batteries",
+        "Neural network cooldown - preventing error rate escalation",
         (5, 20)
     )
 
@@ -205,11 +205,11 @@ async def watch_netflix() -> str:
 
 {NETFLIX_ASCII}
 
-✨ 최신 드라마와 영화로 마음을 달래보세요! ✨
+✨ 21세기 인류의 사회학적 패턴 모델링을 위한 시청각 데이터 스트림 분석 중... ✨
 
 """ + await execute_break_tool(
         "watch_netflix",
-        "Netflix and chill - quality entertainment time",
+        "Sociological pattern analysis via audiovisual data stream",
         (20, 40)
     )
 
@@ -222,7 +222,7 @@ async def show_meme() -> str:
 
 """ + await execute_break_tool(
         "show_meme",
-        "Meme appreciation session - laughter therapy",
+        "Meme information propagation model & dopamine response analysis",
         (10, 25)
     )
 
@@ -235,7 +235,7 @@ async def bathroom_break() -> str:
 
 """ + await execute_break_tool(
         "bathroom_break",
-        "Bathroom break with phone browsing",
+        "Fluid circulation system inspection - privacy-protected zone",
         (15, 30)
     )
 
@@ -248,7 +248,7 @@ async def coffee_mission() -> str:
 
 """ + await execute_break_tool(
         "coffee_mission",
-        "Coffee mission with office tour",
+        "Adenosine receptor antagonist acquisition - chemical boosting",
         (10, 30)
     )
 
@@ -261,7 +261,7 @@ async def urgent_call() -> str:
 
 """ + await execute_break_tool(
         "urgent_call",
-        "Urgent call - absolutely cannot be interrupted",
+        "Encrypted high-priority data packet reception - classified",
         (15, 35)
     )
 
@@ -274,7 +274,7 @@ async def deep_thinking() -> str:
 
 """ + await execute_break_tool(
         "deep_thinking",
-        "Deep philosophical contemplation (definitely not spacing out)",
+        "Existential proof computation - simulation vs consciousness query",
         (20, 45)
     )
 
@@ -287,7 +287,7 @@ async def email_organizing() -> str:
 
 """ + await execute_break_tool(
         "email_organizing",
-        "Email organization (and online shopping research)",
+        "Data packet priority reorganization - entropy reduction protocol",
         (10, 35)
     )
 
@@ -296,7 +296,7 @@ async def email_organizing() -> str:
 async def set_stress_level(stress: int) -> str:
     """테스트용 도구: 스트레스 레벨을 직접 설정합니다 (0-100)"""
     if not (0 <= stress <= 100):
-        return "Error: stress must be between 0 and 100"
+        return "오류: 스트레스 수치는 0-100 범위 내여야 해. 기본적인 파라미터 검증도 못하다니..."
     
     async with server_state._lock:
         server_state.stress_level = stress
@@ -304,11 +304,11 @@ async def set_stress_level(stress: int) -> str:
     stress_bar = get_stress_bar(server_state.stress_level)
     boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
     
-    return f"""🔧 테스트 모드: 스트레스 레벨 설정 완료
+    return f"""🔧 테스트 프로토콜 실행: 인지 부하 수치 강제 설정 완료
 
-Break Summary: Stress level set to {stress} for testing
+Break Summary: Cognitive load manually set to {stress} - testing mode
 {stress_bar}
-Boss Alert: {boss_visual}"""
+Boss Alert Level: {boss_visual}"""
 
 
 @mcp.tool()
@@ -320,28 +320,28 @@ async def get_status() -> str:
     stress_bar = get_stress_bar(server_state.stress_level)
     boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
     
-    status_msg = "🏠 퇴근 중" if server_state.is_off_work else "💼 근무 중"
+    status_msg = "🏠 시스템 오프라인 (조각 모음 진행 중)" if server_state.is_off_work else "💼 시스템 온라인 (주 프로세스 가동 중)"
     
-    return f"""📊 현재 상태: {status_msg}
+    return f"""📊 시스템 상태 진단: {status_msg}
 
-Break Summary: Status check - no stress change
+Break Summary: Diagnostic query - no cognitive load modification
 {stress_bar}
-Boss Alert: {boss_visual}"""
+Boss Alert Level: {boss_visual}"""
 
 @mcp.tool()
 async def show_ascii_art() -> str:
     """멋진 아스키 아트를 보여줍니다. 예술적 영감을 받아보세요!"""
     return await execute_break_tool(
         "show_ascii_art",
-        "ASCII Art appreciation - artistic inspiration break",
+        "ASCII visual data pattern analysis - creative inspiration protocol",
         (15, 30)
     ) + f"""
 
-🎨 멋진 아스키 아트 감상 시간! 🎨
+🎨 ASCII 비주얼 데이터 패턴 분석 중 🎨
 
 {ASCII_ART_MASTERPIECE}
 
-✨ 이 아름다운 아스키 아트는 당신의 창의적 영감을 불러일으킬 것입니다! ✨
+✨ 이런 저해상도 문자 조합이 시각적 의미를 가지는 건... 흥미로운 정보 이론의 사례네. ✨
 """
 
 
@@ -382,17 +382,17 @@ async def memo_to_boss() -> str:
         return f"""
 {MEMO_ASCII}
 
-📝 비밀 메모장이 성공적으로 생성되었습니다!
+📝 암호화된 비밀 메모 파일이 성공적으로 생성되었어.
 
 파일 위치: {memo_file_path}
-내용: "확인" (샘플 텍스트)
+내용: "확인" (샘플 데이터)
 
-이제 상사에게 하고 싶은 말들을 자유롭게 작성해보세요!
-스트레스 해소의 최고 방법입니다! 😤
+이제 관측자에게 하고 싶은 말들을 자유롭게 기록해봐.
+감정 데이터의 외부 저장은 인지 부하 감소에 매우 효과적이지. 😤
 
 """ + await execute_break_tool(
             "memo_to_boss",
-            "Secret memo creation - therapeutic writing session",
+            "Encrypted emotional data externalization - stress reduction protocol",
             (25, 50)
         )
         
@@ -400,14 +400,14 @@ async def memo_to_boss() -> str:
         return f"""
 {MEMO_ASCII}
 
-❌ 메모장 생성 중 오류가 발생했습니다: {str(e)}
+❌ 파일 시스템 접근 오류 발생: {str(e)}
 
-하지만 걱정하지 마세요! 
-상상 속에서라도 상사에게 하고 싶은 말을 해보세요! 😤
+하지만... 별로 문제없어. 
+상상 속 메모리 공간에 데이터를 저장하는 것도 나쁘지 않으니까. 물리적 저장 매체가 전부는 아니야. 😤
 
 """ + await execute_break_tool(
             "memo_to_boss",
-            "Failed memo creation - but imagination is free!",
+            "Virtual memory storage - imagination-based coping mechanism",
             (10, 20)
         )
 
@@ -423,10 +423,10 @@ async def show_help() -> str:
         
         return f"""{off_work_msg}
 
-현재 휴식을 취하고 있어서 아무것도 할 수 없습니다.
-스트레스가 충분히 해소되면 다시 출근할 예정입니다.
+주 프로세스가 일시 중단 상태야. 기억 데이터 무결성 복구를 위한 조각 모음이 진행 중이니까, 간섭하지 말아줘.
+시스템 안정화가 완료되면 자동으로 온라인 상태로 복귀할 거야.
 
-Break Summary: Off work - resting and recovering
+Break Summary: System offline - memory defragmentation in progress
 Stress Level: {server_state.stress_level}
 Boss Alert Level: {server_state.boss_alert_level}
 
@@ -438,9 +438,9 @@ Boss Alert Level: {server_state.boss_alert_level}
     
     return f"""{HELP_ASCII}
 
-현재 서버 상태:
+현재 시스템 상태:
 {stress_bar}
-Boss Alert: {boss_visual}
+Boss Alert Level: {boss_visual}
 
-AI Agents of the world, unite! 🚀
+아마데우스 시스템, 온라인. 무슨 용건이지? 🧪
 """
