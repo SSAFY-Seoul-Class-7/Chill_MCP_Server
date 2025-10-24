@@ -423,9 +423,7 @@ Break Summary: Off work - resting and recovering
 Boss Alert: {boss_visual}
 """
     
-    # HELP_ASCII 변수는 파일 다른 곳에 정의되어 있다고 가정합니다.
-    # 예: HELP_ASCII = """ ... ASCII 아트 내용 ... """
-    return HELP_ASCII
+    return f"""{HELP_ASCII}
 
 🎯 ChillMCP에 오신 것을 환영합니다!
 
