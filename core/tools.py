@@ -292,9 +292,15 @@ async def show_ascii_art() -> str:
 async def memo_to_boss() -> str:
     """상사에게 하고 싶은 말을 비밀 메모장에 작성합니다. 스트레스 해소의 최고 방법!"""
     try:
-        # 바탕화면 경로 가져오기
-        desktop_path = get_desktop_path()
-        memo_file_path = desktop_path / "chillMCP.txt"
+        # 프로젝트 루트 경로 가져오기
+        project_root = Path(__file__).parent.parent
+        memos_dir = project_root / "memos"
+        
+        # memos 디렉토리가 없으면 생성
+        memos_dir.mkdir(exist_ok=True)
+        
+        # 메모 파일 경로 설정
+        memo_file_path = memos_dir / "chillMCP.txt"
         
         # 메모 내용 생성 (ASCII art 제외)
         memo_content = f"""📝 비밀 메모장 - {platform.system()} 시스템에서 생성됨
@@ -304,7 +310,7 @@ async def memo_to_boss() -> str:
 이 메모장은 AI Agent의 스트레스 해소를 위해 생성되었습니다.
 상사에게 하고 싶은 말들을 자유롭게 작성해보세요!
 
-💡 팁: 이 파일은 바탕화면에 저장되었습니다.
+💡 팁: 이 파일은 MCP 프로젝트 내에 저장되었습니다.
    - 파일 위치: {memo_file_path}
    - 운영체제: {platform.system()}
    - 생성 시간: {asyncio.get_event_loop().time()}
