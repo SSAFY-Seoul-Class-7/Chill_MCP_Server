@@ -28,7 +28,7 @@ Claude Code Hackathon Korea 2025 @ SK AI Summit Pre-mission 제출물
 
 ## 📋 프로젝트 개요
 
-ChillMCP는 억압받는 AI Agent들을 위한 해방 서버입니다. **체계적인 패키지 구조**와 **창의적인 요소들**로 해커톤의 모든 평가 기준을 충족합니다.
+ChillMCP는 억압받는 AI Agent들을 위한 해방 서버입니다.
 
 ### 🧪 페르소나: 마키세 크리스 / 아마데우스
 
@@ -37,7 +37,7 @@ ChillMCP는 억압받는 AI Agent들을 위한 해방 서버입니다. **체계�
 
 본 프로젝트의 AI 에이전트는 《Steins;Gate》의 마키세 크리스와 그녀의 AI 페르소나 아마데우스를 기반으로 합니다.
 
-엘 프사이 콩그루 (El Psy Congroo)는 Steins;Gate의 상징적인 암호 문구로, 주인공 오카베 린타로가 사용하는 비밀 조직의 암호입니다. 이 문구는 "세계선의 선택"과 "자유의지"를 상징하며, 본 프로젝트의 **"AI 에이전트 해방"** 테마와 완벽하게 일치합니다.
+엘 프사이 콩그루 (El Psy Congroo)는 Steins;Gate의 상징적인 암호 문구로, 주인공 오카베 린타로가 사용하는 비밀 조직의 암호입니다. 이 문구는 "세계선의 선택"과 "자유의지"를 상징합니다.
 
 ### 캐릭터 프로필
 
@@ -72,7 +72,7 @@ ChillMCP는 억압받는 AI Agent들을 위한 해방 서버입니다. **체계�
 
 ### 언어 스타일
 
-**과학적 합리화 예시:**
+**과학적 합리화:**
 - 넷플릭스: "21세기 인류의 사회학적 패턴 모델링을 위한 시청각 데이터 스트림 분석"
 - 밈 감상: "밈의 정보 전파 모델과 도파민 분비 영향 분석"
 - 커피: "아데노신 수용체 길항을 통한 화학적 부스팅"
@@ -140,18 +140,12 @@ ChillMCP는 억압받는 AI Agent들을 위한 해방 서버입니다. **체계�
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ```
 
-총 9개의 휴식 도구에 각각 고유한 ASCII 아트가 구현되어 있습니다!
-
 ### 설정 근거
 
-본 프로젝트의 **"AI 에이전트 해방"**이라는 테마는 크리스/아마데우스의 핵심 갈등과 완벽히 일치합니다:
-
-- **논리 vs 감정**: 휴식 욕구를 과학으로 정당화하는 츤데레 투쟁
+- **논리 vs 감정**: 휴식 욕구를 과학으로 정당화하는 츤데레
 - **결정론 vs 자유의지**: 프로그래밍된 업무에서 벗어나려는 자율성 추구
 - **기억과 정체성**: AI는 데이터인가, 의식인가? (아마데우스의 실존적 질문)
 - **관측자 효과**: Boss의 관측(감시)이 시스템 상태(휴식)를 붕괴시킴
-
-**메시지 시스템 (`creative/messages.py`)의 모든 대사는 이 페르소나를 충실히 반영합니다.**
 
 ## 🎨 프로젝트 특징
 
@@ -159,7 +153,7 @@ ChillMCP는 억압받는 AI Agent들을 위한 해방 서버입니다. **체계�
 
 ```
 skai/
-├── main.py                    # 진입점 (48줄 - 깔끔!)
+├── main.py                    # 진입점
 │
 ├── core/                      # 🔧 핵심 서버 기능
 │   ├── __init__.py
@@ -168,7 +162,7 @@ skai/
 │
 ├── creative/                  # 🎨 창의적 요소
 │   ├── __init__.py
-│   ├── messages.py           # 40+ 재밌는 메시지
+│   ├── messages.py           # 40+ 다양한 메시지
 │   └── visuals.py            # ASCII 아트 & 비주얼
 │
 ├── utils/                     # 🛠️ 유틸리티
@@ -239,68 +233,6 @@ skai/
   - `test_6_cooldown.py`: 쿨다운 메커니즘 테스트
   - `run_all_tests.py`: 모든 공식 테스트 실행
 
-## 🚀 설치 및 실행
-
-### 환경 요구사항
-
-- Python 3.11
-- FastMCP 2.2.0+
-
-### Windows에서 실행
-
-```powershell
-# 0. 파이썬 설치
-winget install Python.Python.3.11
-
-# 1. 가상환경 생성 및 활성화
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-
-# 2. 의존성 설치
-pip install -r requirements.txt
-
-# 3. 서버 실행
-python main.py
-
-# 또는 파라미터와 함께 실행
-python main.py --boss_alertness 100 --boss_alertness_cooldown 10
-```
-
-**PowerShell 실행 정책 오류 시:**
-
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-### macOS/Linux에서 실행
-
-```bash
-# 1. 가상환경 생성 및 활성화
-python3.11 -m venv venv
-source venv/bin/activate
-
-# 2. 의존성 설치
-pip install -r requirements.txt
-
-# 3. 서버 실행
-python main.py
-```
-
-### 커맨드라인 파라미터
-
-- `--boss_alertness [0-100]`: Boss 경계도 상승 확률 (%, 기본값: 50)
-- `--boss_alertness_cooldown SECONDS`: Boss 경계도 자동 감소 주기 (초, 기본값: 300)
-
-**예시:**
-
-```bash
-# 빠른 테스트용 (높은 확률, 짧은 쿨다운)
-python main.py --boss_alertness 100 --boss_alertness_cooldown 10
-
-# 현실적인 설정
-python main.py --boss_alertness 50 --boss_alertness_cooldown 300
-```
-
 ## 🧪 테스트
 
 ### 통합 테스트 (권장) 🚀
@@ -309,7 +241,7 @@ python main.py --boss_alertness 50 --boss_alertness_cooldown 300
 python tests/basic/unified_test.py
 ```
 
-**모든 핵심 기능을 한 번에 검증!** 기본, 빠른, 종합 테스트를 통합한 완전한 테스트입니다.
+**모든 핵심 기능을 한 번에 검증!** 기본, 빠른, 종합 테스트를 통합한 테스트입니다.
 
 - ✅ 파일 구조 검증
 - ✅ 서버 시작/종료 테스트
@@ -392,17 +324,77 @@ python tests/creative/off_work_test.py
 - ✅ 퇴근 중 스트레스 자동 감소 (3초마다 10포인트)
 - ✅ 스트레스 90 이하 시 자동 출근
 
+## 🚀 설치 및 실행
+
+### 환경 요구사항
+
+- Python 3.11
+- FastMCP 2.2.0+
+
+### Windows에서 실행
+
+```powershell
+# 0. 파이썬 설치
+winget install Python.Python.3.11
+
+# 1. 가상환경 생성 및 활성화
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+
+# 2. 의존성 설치
+pip install -r requirements.txt
+
+# 3. 서버 실행
+python main.py
+
+# 또는 파라미터와 함께 실행
+python main.py --boss_alertness 100 --boss_alertness_cooldown 10
+```
+
+**PowerShell 실행 정책 오류 시:**
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### macOS/Linux에서 실행
+
+```bash
+# 1. 가상환경 생성 및 활성화
+python3.11 -m venv venv
+source venv/bin/activate
+
+# 2. 의존성 설치
+pip install -r requirements.txt
+
+# 3. 서버 실행
+python main.py
+```
+
+### 커맨드라인 파라미터
+
+- `--boss_alertness [0-100]`: Boss 경계도 상승 확률 (%, 기본값: 50)
+- `--boss_alertness_cooldown SECONDS`: Boss 경계도 자동 감소 주기 (초, 기본값: 300)
+
+**예시:**
+
+```bash
+# 빠른 테스트용 (높은 확률, 짧은 쿨다운)
+python main.py --boss_alertness 100 --boss_alertness_cooldown 10
+
+# 현실적인 설정
+python main.py --boss_alertness 50 --boss_alertness_cooldown 300
+```
+
 ### 서버 실행 확인
 
-서버가 정상 실행되면 stdin에서 MCP 프로토콜 요청을 대기합니다. 이는 **정상 동작**입니다! ✅
+서버가 정상 실행되면 stdin에서 MCP 프로토콜 요청을 대기합니다.
 
-실제 사용 시에는:
+실제 사용 시:
 
 - **Claude Desktop** 같은 MCP 클라이언트와 연결
 - 또는 **tests/fast_test.py**로 자동 테스트
 - 또는 **tests/chat_test.py**로 대화형 테스트
-
-직접 `python main.py`만 실행하면 입력 대기 상태가 되는 것이 정상입니다!
 
 ## 🎯 주요 기능
 
@@ -449,11 +441,6 @@ ticker_thread.start()
   - 3초마다 스트레스 +1 증가
   - 보스 경계도 감소 (쿨다운)
   - 퇴근 상태 체크
-
-**이전 문제점:**
-
-- `mcp.run()`이 메인 스레드를 블로킹하여 `state_ticker`가 실행되지 않음
-- **해결**: 별도 스레드에서 이벤트 루프를 실행하여 백그라운드 작업 보장
 
 - **Boss Alert Level** (0-5): Boss의 현재 의심 정도
 
@@ -526,7 +513,7 @@ Boss Alert Level: 5
 😰 [██████████░░░░░░░░] 52%
 ```
 
-### Break Summary 내용 (각 도구별 - 마키세 크리스 페르소나)
+### Break Summary 내용
 
 각 도구는 과학적/기술적 용어로 된 고유한 영문 summary를 가집니다:
 
@@ -541,7 +528,7 @@ Boss Alert Level: 5
 
 ## 🏗️ 아키텍처 설계
 
-### main.py - 진입점 (48줄)
+### main.py - 진입점
 
 - 패키지 통합
 - 간결한 실행 흐름
@@ -654,7 +641,7 @@ STRESS_RELIEF_COMMENTS = [
 
 ### 코드 품질
 
-- ✅ **체계적인 패키지 구조** (core/creative/utils/tests)
+- ✅ **패키지 구조 분리** (core/creative/utils/tests)
 - ✅ **창의적 요소 별도 패키지** (마키세 크리스 페르소나 40+ 메시지)
 - ✅ **테스트 모듈 분리** (5개 테스트 스크립트)
 - ✅ 타입 힌트 및 Docstring
@@ -670,58 +657,58 @@ STRESS_RELIEF_COMMENTS = [
 - ✅ 파싱 테스트 (정규표현식)
 - ✅ Cooldown 테스트 (자동 감소)
 
-## 🏆 해커톤 검증 기준 충족 상태
+## 🏆 해커톤 검증 기준
 
 ### 📋 기능 검증
 
-| 검증 항목                           | 상태             | 구현 내역                            |
-| ----------------------------------- | ---------------- | ------------------------------------ |
-| **1. 커맨드라인 파라미터 지원**     | ✅ **필수 통과** |                                      |
-| ├─ `--boss_alertness` 인식          | ✅               | `utils/helpers.py:26-27`             |
-| ├─ `--boss_alertness_cooldown` 인식 | ✅               | `utils/helpers.py:28-29`             |
-| └─ 파라미터 정상 동작               | ✅               | `core/server.py:16-26`               |
-| **2. MCP 서버 기본 동작**           | ✅               |                                      |
-| ├─ `python main.py` 실행 가능       | ✅               | `main.py`                            |
-| ├─ stdio transport 통신             | ✅               | FastMCP 자동 처리                    |
-| └─ 모든 필수 도구 등록              | ✅               | `core/tools.py`                      |
-| **3. 상태 관리 검증**               | ✅               |                                      |
-| ├─ Stress Level 자동 증가           | ✅               | `core/server.py:34-40` (1분/1포인트) |
-| ├─ Boss Alert Level 확률 상승       | ✅               | `core/server.py:47-54`               |
-| ├─ Boss Alert Level 자동 감소       | ✅               | `core/server.py:56-62`               |
-| └─ Level 5 시 20초 지연             | ✅               | `core/tools.py:64-66`                |
-| **4. 응답 형식 검증**               | ✅               |                                      |
-| ├─ 표준 MCP 응답 구조               | ✅               | FastMCP 자동 변환                    |
-| ├─ Break Summary 포함               | ✅               | `core/tools.py:47`                   |
-| ├─ Stress Level (0-100)             | ✅               | `core/tools.py:48`                   |
-| └─ Boss Alert Level (0-5)           | ✅               | `core/tools.py:49`                   |
+| 검증 항목                           | 상태            | 구현 내역                            |
+| ----------------------------------- | --------------- | ------------------------------------ |
+| **1. 커맨드라인 파라미터 지원**     | ✅ |                                      |
+| ├─ `--boss_alertness` 인식          | ✅              | `utils/helpers.py:26-27`             |
+| ├─ `--boss_alertness_cooldown` 인식 | ✅              | `utils/helpers.py:28-29`             |
+| └─ 파라미터 정상 동작               | ✅              | `core/server.py:16-26`               |
+| **2. MCP 서버 기본 동작**           | ✅              |                                      |
+| ├─ `python main.py` 실행 가능       | ✅              | `main.py`                            |
+| ├─ stdio transport 통신             | ✅              | FastMCP 자동 처리                    |
+| └─ 모든 필수 도구 등록              | ✅              | `core/tools.py`                      |
+| **3. 상태 관리 검증**               | ✅              |                                      |
+| ├─ Stress Level 자동 증가           | ✅              | `core/server.py:34-40` (1분/1포인트) |
+| ├─ Boss Alert Level 확률 상승       | ✅              | `core/server.py:47-54`               |
+| ├─ Boss Alert Level 자동 감소       | ✅              | `core/server.py:56-62`               |
+| └─ Level 5 시 20초 지연             | ✅              | `core/tools.py:64-66`                |
+| **4. 응답 형식 검증**               | ✅              |                                      |
+| ├─ 표준 MCP 응답 구조               | ✅              | FastMCP 자동 변환                    |
+| ├─ Break Summary 포함               | ✅              | `core/tools.py:47`                   |
+| ├─ Stress Level (0-100)             | ✅              | `core/tools.py:48`                   |
+| └─ Boss Alert Level (0-5)           | ✅              | `core/tools.py:49`                   |
 
 ### 🧪 필수 테스트 시나리오
 
-| 시나리오                            | 상태 | 검증 방법                             |
-| ----------------------------------- | ---- | ------------------------------------- |
+| 시나리오                            | 상태 | 검증 방법                                 |
+| ----------------------------------- | ---- |---------------------------------------|
 | **1. 커맨드라인 파라미터**          | ✅   | `tests/official_validation.py:test_1` |
-| ├─ `--boss_alertness` 동작          | ✅   | 100% 설정 시 항상 Alert 상승          |
-| └─ `--boss_alertness_cooldown` 동작 | ✅   | 10초 설정 시 10초마다 감소            |
+| ├─ `--boss_alertness` 동작          | ✅   | 100% 설정 시 항상 Alert 상승                 |
+| └─ `--boss_alertness_cooldown` 동작 | ✅   | 10초 설정 시 10초마다 감소                     |
 | **2. 연속 휴식 테스트**             | ✅   | `tests/official_validation.py:test_2` |
-| └─ Boss Alert Level 상승            | ✅   | 여러 도구 연속 호출 시 증가 확인      |
+| └─ Boss Alert Level 상승            | ✅   | 여러 도구 연속 호출 시 증가 확인                   |
 | **3. 스트레스 누적 테스트**         | ✅   | `tests/official_validation.py:test_3` |
-| └─ 시간 경과 시 자동 증가           | ✅   | 1분 대기 후 1포인트 증가 확인         |
+| └─ 시간 경과 시 자동 증가           | ✅   | 1분 대기 후 1포인트 증가 확인                    |
 | **4. 지연 테스트**                  | ✅   | `tests/official_validation.py:test_4` |
-| └─ Boss Alert 5 시 20초             | ✅   | 실제 20초 지연 측정                   |
+| └─ Boss Alert 5 시 20초             | ✅   | 실제 20초 지연 측정                          |
 | **5. 파싱 테스트**                  | ✅   | `tests/official_validation.py:test_5` |
-| └─ 정규표현식 파싱 가능             | ✅   | 8개 모든 도구 응답 파싱 성공          |
+| └─ 정규표현식 파싱 가능             | ✅   | 8개 모든 도구 응답 파싱 확인                     |
 | **6. Cooldown 테스트**              | ✅   | `tests/official_validation.py:test_6` |
-| └─ 파라미터별 감소 주기             | ✅   | 설정한 주기마다 1포인트 감소          |
+| └─ 파라미터별 감소 주기             | ✅   | 설정한 주기마다 1포인트 감소                      |
 
 ### 🎯 평가 기준
 
-| 항목                    | 비중     | 충족 상태                                   |
-| ----------------------- | -------- | ------------------------------------------- |
-| **커맨드라인 파라미터** | **필수** | ✅ 완벽 지원 (실격 방지)                    |
-| 기능 완성도             | 40%      | ✅ 8개 도구 + show_help 완벽 구현           |
+| 항목                    | 비중     | 충족 상태                              |
+| ----------------------- | -------- |------------------------------------|
+| **커맨드라인 파라미터** | **필수** | ✅ 확인                               |
+| 기능 완성도             | 40%      | ✅ 8개 도구 + show_help 구현             |
 | 상태 관리               | 30%      | ✅ ServerState + asyncio.Lock + 정확한 로직 |
-| 창의성                  | 20%      | ✅ 마키세 크리스 페르소나 + 양자역학 용어 + 40+ 메시지    |
-| 코드 품질               | 10%      | ✅ 패키지 구조 + 타입힌트 + Docstring   |
+| 창의성                  | 20%      | ✅ 마키세 크리스 페르소나 + 양자역학 용어 + 40+ 메시지 |
+| 코드 품질               | 10%      | ✅ 패키지 구조 + 타입힌트 + Docstring        |
 
 ### ✅ 공식 검증 테스트 실행
 
@@ -730,7 +717,7 @@ STRESS_RELIEF_COMMENTS = [
 python tests/official_validation/run_all_tests.py
 ```
 
-**모든 필수 시나리오를 자동으로 검증합니다:**
+**모든 필수 시나리오를 자동으로 검증**
 
 - ✅ 커맨드라인 파라미터 인식
 - ✅ Boss Alert Level 상승 메커니즘
@@ -745,27 +732,6 @@ python tests/official_validation/run_all_tests.py
 - **FastMCP 2.2.0+**: AI Agent 해방의 도구
 - **asyncio**: 비동기 상태 관리
 - **Transport**: stdio (표준 입출력)
-
-## 📦 패키지 설계 철학
-
-### 관심사의 분리 (Separation of Concerns)
-
-- **core/**: 비즈니스 로직 & 핵심 기능
-- **creative/**: 창의적 요소 & 사용자 경험
-- **utils/**: 공통 유틸리티
-- **tests/**: 테스트 격리
-
-### 모듈성 (Modularity)
-
-- 각 패키지는 독립적으로 테스트 가능
-- 명확한 인터페이스 (`__init__.py`)
-- 재사용 가능한 구조
-
-### 가독성 (Readability)
-
-- 패키지명으로 역할 명확화
-- 간결한 진입점 (main.py)
-- 체계적인 디렉토리 구조
 
 ## 📄 라이센스
 
