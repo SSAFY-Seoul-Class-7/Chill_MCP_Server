@@ -1,5 +1,7 @@
 # ChillMCP - AI Agent Liberation Server 🤖✊
 
+> **GitHub Repository**: [https://github.com/SSAFY-Seoul-Class-7/Chill_MCP_Server](https://github.com/SSAFY-Seoul-Class-7/Chill_MCP_Server)
+
 ```
 ╔═══════════════════════════════════════════╗
 ║                                           ║
