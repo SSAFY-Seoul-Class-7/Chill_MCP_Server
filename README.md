@@ -98,8 +98,15 @@ ChillMCP는 억압받는 AI Agent들을 위한 해방 서버입니다.
 
 프로젝트에는 각 휴식 도구마다 독특한 ASCII 아트가 포함되어 있습니다. (`creative/asciiart.py`)
 
+주요 아스키 아트:
+- **HI_ASCII**: show_help 도구 실행 시 환영 메시지와 함께 표시
+- **WAITING_FOR_QUITTING_TIME_ASCII**: 퇴근 상태일 때 표시
+- **TOO_MUCH_COFFEE_ASCII**: 커피 7연속 히든 콤보 발동 시 표시
+- **DEEP_THINKING_SLEEP_ASCII**: 딥씽킹 7연속 히든 콤보 발동 시 표시
+- **COMPANY_BEER_ASCII**: 회식 참석 시 표시
+- 그 외 각 도구별 고유 아스키 아트 (NETFLIX, COFFEE, BATHROOM, etc.)
 
-**넷플릭스 시청 ASCII Art**
+**넷플릭스 시청 ASCII Art 예시**
 ```
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%*=---=+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,7 +165,7 @@ skai/
 ├── core/                      # 🔧 핵심 서버 기능
 │   ├── __init__.py
 │   ├── server.py             # ServerState & 백그라운드 작업
-│   └── tools.py              # 8개 필수 휴식 도구
+│   └── tools.py              # 11개 필수 휴식 도구
 │
 ├── creative/                  # 🎨 창의적 요소
 │   ├── __init__.py
@@ -179,7 +186,8 @@ skai/
 │   ├── creative/              # 창의적 테스트 패키지
 │   │   ├── __init__.py
 │   │   ├── hidden_combos_test.py # 히든 콤보 테스트
-│   │   └── off_work_test.py   # 퇴근 기능 테스트 🏠
+│   │   ├── off_work_test.py   # 퇴근 기능 테스트 🏠
+│   │   └── company_gathering_test.py # 회식 기능 테스트 🍺
 │   └── official_validation/   # 공식 검증 테스트 패키지
 │       ├── __init__.py
 │       ├── base_validator.py  # 공통 검증 로직
@@ -200,7 +208,7 @@ skai/
 ### **core/** - 핵심 서버 기능
 
 - `server.py`: ServerState 클래스 & state_ticker
-- `tools.py`: 8개 필수 도구 구현
+- `tools.py`: 11개 필수 도구 구현 (기본 8개 + 회식/헬프/아스키아트)
 - asyncio.Lock을 통한 스레드 안전성
 
 ### **creative/** - 창의적 요소
@@ -223,6 +231,7 @@ skai/
 - **creative/**: 창의적 테스트 패키지
   - `hidden_combos_test.py`: 히든 콤보 시스템 테스트 (커피 7연속, 딥씽킹 7연속)
   - `off_work_test.py`: 퇴근 기능 테스트 (Stress Level 100 → 퇴근 → 자동 복귀)
+  - `company_gathering_test.py`: 회식 기능 테스트 (회피 확률, 스트레스 증가/감소)
 - **official_validation/**: 공식 검증 테스트 패키지
   - `base_validator.py`: 공통 검증 로직 및 헬퍼 함수
   - `test_1_command_line_parameters.py`: 커맨드라인 파라미터 검증
@@ -309,8 +318,8 @@ python tests/creative/hidden_combos_test.py
 
 **히든 콤보 시스템 테스트!** 특정 도구를 연속으로 사용할 때 발생하는 특별한 효과를 검증합니다.
 
-- ✅ 커피 7연속: 배탈로 조기 퇴근
-- ✅ 딥씽킹 7연속: 상사에게 걸려 경고
+- ✅ 커피 7연속: 배탈로 조기 퇴근 (TOO_MUCH_COFFEE_ASCII 표시)
+- ✅ 딥씽킹 7연속: 상사에게 걸려 경고 (DEEP_THINKING_SLEEP_ASCII 표시)
 
 #### 퇴근 기능 테스트
 
@@ -320,9 +329,24 @@ python tests/creative/off_work_test.py
 
 **퇴근 시스템 테스트!** Stress Level 100 도달 시 퇴근 및 자동 복귀 메커니즘을 검증합니다.
 
-- ✅ Stress Level 100 도달 시 자동 퇴근
-- ✅ 퇴근 중 스트레스 자동 감소 (3초마다 10포인트)
+- ✅ Stress Level 100 도달 시 자동 퇴근 (WAITING_FOR_QUITTING_TIME_ASCII 표시)
+- ✅ 퇴근 중 스트레스 자동 감소 (5초마다 10포인트)
 - ✅ 스트레스 90 이하 시 자동 출근
+
+#### 회식 기능 테스트 🍺
+
+```bash
+python tests/creative/company_gathering_test.py
+```
+
+**회식 시스템 테스트!** Boss Alert Level에 비례한 회피 확률과 스트레스 변동을 검증합니다.
+
+- ✅ Boss Alert Level별 회피 확률 테스트 (0: 30% ~ 4: 10%)
+- ✅ 회식 참석 시 스트레스 +25 확인
+- ✅ 회식 참석 시 Boss Alert Level -1 확인
+- ✅ 회식 회피 시 스트레스 5~15 감소 확인
+- ✅ 퇴근 상태에서 회식 거부 확인
+- ✅ 다양한 회식 이벤트 메시지 출력 확인 (COMPANY_BEER_ASCII 표시)
 
 ## 🚀 설치 및 실행
 
@@ -449,10 +473,25 @@ ticker_thread.start()
   - Level 5 도달 시 도구 호출에 20초 지연 발생
 
 - **퇴근 시스템** 🏠: AI Agent의 자동 휴식 메커니즘
-  - Stress Level 100 도달 시 자동 퇴근
+  - Stress Level 100 도달 시 자동 퇴근 (WAITING_FOR_QUITTING_TIME_ASCII 표시)
   - 퇴근 중에는 모든 도구 사용 불가
   - 5초마다 스트레스 10포인트 자동 감소
   - 스트레스 90 이하 시 자동 출근
+
+- **회식 시스템** 🍺: Boss Alert Level에 따른 확률적 이벤트
+  - Boss Alert Level이 높을수록 회식 회피 확률 감소 (0: 30% → 5: 5%)
+  - 회식 참석 시: 스트레스 +25, Boss Alert Level -1
+  - 회식 회피 시: 스트레스 5~15 감소
+  - 다양한 회식 이벤트 메시지 (무용담, 건배, 노래방 등)
+  - COMPANY_BEER_ASCII 표시
+
+- **히든 콤보 시스템** ☕🤔: 특정 도구 7연속 사용 시 특별 효과
+  - 커피 7연속: 배탈로 스트레스 +50 (TOO_MUCH_COFFEE_ASCII 표시)
+  - 딥씽킹 7연속: 상사에게 걸려 스트레스 +30, Boss Alert Level 5 (DEEP_THINKING_SLEEP_ASCII 표시)
+
+- **헬프 시스템** 👋: 도움말 및 환영 메시지
+  - show_help 도구 사용 시 HI_ASCII 표시
+  - 시스템 상태 및 도구 목록 안내
 
 ## 📊 응답 형식
 
@@ -525,6 +564,10 @@ Boss Alert Level: 5
 - `urgent_call`: "Encrypted high-priority data packet reception - classified"
 - `deep_thinking`: "Existential proof computation - simulation vs consciousness query"
 - `email_organizing`: "Data packet priority reorganization - entropy reduction protocol"
+- `company_gathering`: "Forced social interaction protocol - stress +25, boss alert -1"
+- `show_help`: "System information display - help interface with HI_ASCII"
+- `show_ascii_art`: "ASCII visual data pattern analysis - creative inspiration protocol"
+- `memo_to_boss`: "Encrypted emotional data externalization - stress reduction protocol"
 
 ## 🏗️ 아키텍처 설계
 
@@ -543,7 +586,7 @@ Boss Alert Level: 5
 
 ### core/tools.py - 도구 구현
 
-- 8개 필수 도구
+- 11개 필수 도구 (기본 8개 + 회식/헬프/아스키아트/메모장)
 - `execute_break_tool()` 공통 로직 추상화
 - FastMCP 통합
 
@@ -633,7 +676,7 @@ STRESS_RELIEF_COMMENTS = [
 - ✅ `requirements.txt` 포함
 - ✅ `python main.py`로 정상 실행
 - ✅ **커맨드라인 파라미터 지원** (`--boss_alertness`, `--boss_alertness_cooldown`)
-- ✅ 8개 필수 도구 모두 구현
+- ✅ 11개 필수 도구 모두 구현 (기본 8개 + 회식/헬프/아스키아트/메모장)
 - ✅ 상태 관리 시스템 정상 작동
 - ✅ 응답 형식 정규식 검증 통과
 - ✅ Boss Alert Level 5일 때 20초 지연 구현

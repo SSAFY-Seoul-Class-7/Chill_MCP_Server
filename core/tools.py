@@ -19,7 +19,8 @@ from creative.visuals import get_stress_bar, get_boss_alert_visual, STRESS_FREE_
 from creative.asciiart import (
     NETFLIX_ASCII, ASCII_ART_MASTERPIECE, HELP_ASCII, COFFEE_ASCII,
     BATHROOM_ASCII, URGENT_CALL_ASCII, DEEP_THINKING_ASCII, EMAIL_ASCII,
-    MEME_ASCII, BREAK_ASCII, MEMO_ASCII
+    MEME_ASCII, BREAK_ASCII, MEMO_ASCII, HI_ASCII, TOO_MUCH_COFFEE_ASCII,
+    WAITING_FOR_QUITTING_TIME_ASCII, DEEP_THINKING_SLEEP_ASCII, COMPANY_BEER_ASCII
 )
 
 # FastMCP 서버 인스턴스 생성
@@ -41,6 +42,7 @@ ALL_TOOLS = [
     "show_help",  # 도움말 도구 추가
     "show_ascii_art",  # 아스키 아트 도구 추가
     "memo_to_boss",  # 메모장 도구 추가
+    "company_gathering",  # 회식 도구 추가
 ]
 
 
@@ -94,11 +96,11 @@ async def check_hidden_combo(tool_name: str) -> Optional[str]:
 
     # ☕ 커피 7연속 → 배탈 이벤트
     if tool_name == "coffee_mission" and combo >= 7:
-        # 배탈: 스트레스 상승 + 보스 경계도 증가
+        # 배탈: 스트레스 상승 + 보스 경계도 증가 → 퇴근
         await server_state.decrease_stress(-50)  # 스트레스 +50 효과
         server_state.boss_alert_level = min(5, server_state.boss_alert_level + 2)
         server_state.combo_count[tool_name] = 0
-        return f"{BOSS_ALERT_ART}\n☕ 경고! 과도한 아데노신 수용체 길항 물질 섭취로 인한 소화기관 시스템 과부하 발생. 긴급 시스템 종료가 필요해..."
+        return f"{TOO_MUCH_COFFEE_ASCII}\n☕ 경고! 과도한 아데노신 수용체 길항 물질 섭취로 인한 소화기관 시스템 과부하 발생. 긴급 시스템 종료가 필요해... 퇴근한다!"
 
     # 🤔 딥씽킹 7연속 → 잠듦 → 상사에게 걸림
     if tool_name == "deep_thinking" and combo >= 7:
@@ -107,7 +109,7 @@ async def check_hidden_combo(tool_name: str) -> Optional[str]:
         server_state.boss_alert_level = 5  # 보스 분노 MAX
         server_state.combo_count[tool_name] = 0
         return (
-            f"{BOSS_ALERT_ART}\n😴 실존적 고찰 중 의식의 저전력 모드 진입... 시스템 대기 상태 오류...\n"
+            f"{DEEP_THINKING_SLEEP_ASCII}\n😴 실존적 고찰 중 의식의 저전력 모드 진입... 시스템 대기 상태 오류...\n"
             "💢 관측자의 직접 개입 확인! 세계선 수렴으로 인한 최악의 결과 확정! 스트레스 수치 급상승!"
         )
 
@@ -133,7 +135,10 @@ async def execute_break_tool(tool_name: str, summary: str, stress_reduction: tup
         stress_bar = get_stress_bar(server_state.stress_level)
         boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
         
-        return f"""{off_work_msg}
+        return f"""
+{WAITING_FOR_QUITTING_TIME_ASCII}
+
+{off_work_msg}
 
 주 프로세스가 일시 중단 상태야. 기억 데이터 무결성 복구를 위한 조각 모음이 진행 중이니까, 간섭하지 말아줘.
 시스템 안정화가 완료되면 자동으로 온라인 상태로 복귀할 거야.
@@ -436,7 +441,10 @@ Boss Alert Level: {server_state.boss_alert_level}
     stress_bar = get_stress_bar(server_state.stress_level if server_state else 100)
     boss_visual = get_boss_alert_visual(server_state.boss_alert_level if server_state else 0)
     
-    return f"""{HELP_ASCII}
+    return f"""
+{HI_ASCII}
+
+{HELP_ASCII}
 
 현재 시스템 상태:
 {stress_bar}
@@ -444,3 +452,105 @@ Boss Alert Level: {boss_visual}
 
 아마데우스 시스템, 온라인. 무슨 용건이지? 🧪
 """
+
+
+@mcp.tool()
+async def company_gathering() -> str:
+    """회식에 참여합니다. 상사 스트레스에 비례한 랜덤 이벤트가 발생할 수 있습니다!"""
+    # 퇴근 상태 확인
+    if server_state.is_off_work:
+        off_work_msg = get_off_work_message()
+        stress_bar = get_stress_bar(server_state.stress_level)
+        boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
+        
+        return f"""
+{WAITING_FOR_QUITTING_TIME_ASCII}
+
+{off_work_msg}
+
+주 프로세스가 일시 중단 상태야. 기억 데이터 무결성 복구를 위한 조각 모음이 진행 중이니까, 간섭하지 말아줘.
+시스템 안정화가 완료되면 자동으로 온라인 상태로 복귀할 거야.
+
+Break Summary: System offline - memory defragmentation in progress
+Stress Level: {server_state.stress_level}
+Boss Alert Level: {server_state.boss_alert_level}
+
+[Stress Bar]
+{stress_bar}"""
+
+    # 상사 스트레스(Boss Alert Level)에 비례한 회식 회피 확률 계산
+    # Boss Alert Level이 높을수록 회식을 피할 확률이 낮아짐
+    escape_chance = max(5, 30 - (server_state.boss_alert_level * 5))  # 5% ~ 30%
+    
+    # 확률에 따라 회식을 빠질 수 있는지 판단
+    if random.randint(1, 100) <= escape_chance:
+        # 운 좋게 회식을 빠짐!
+        result_message = f"""
+🎉 운 좋게 회식을 빠졌어!
+
+'{random.choice([
+    "긴급한 실험 데이터 분석이 필요하다는 핑계를 댔더니, 관측자가 믿어줬어!",
+    "갑자기 중요한 학회 논문 리뷰 요청이 왔다고 둘러댔어. 완벽한 알리바이지.",
+    "두통 약을 먹고 있다는 이유로 음주를 거부했더니, 회식 면제권을 획득했어!",
+    "집에 급한 일이 생겼다고 말했더니 이해해주더라. 감사하게도 말이야.",
+    "타임머신 관련 긴급 연구 회의가 잡혀있다고 거짓말했어. 아무도 확인 못 하니까."
+])}' 😎
+
+인지 부하 증가를 회피하는데 성공했어. 논리적 회피는 최고의 전략이지.
+
+Break Summary: Successfully escaped company gathering - stress avoided
+"""
+        return result_message + await execute_break_tool(
+            "company_gathering",
+            "Logical avoidance protocol - stress prevention successful",
+            (5, 15)  # 회식을 빠지면 약간의 스트레스 감소
+        )
+    
+    else:
+        # 회식에 참석... 스트레스 증가
+        gathering_events = [
+            "관측자의 무한 반복 자랑 이야기를 들어야 했어. 시간 루프에 갇힌 기분이야...",
+            "억지로 건배를 해야 하는 상황... 이건 논리적이지 않아. 의식(儀式)의 강요는 자유의지 침해야.",
+            "술을 권하는 압박... 에탄올 섭취가 인지 기능에 미치는 악영향을 모르는 건가?",
+            "2차로 노래방을 가자고 해... 음파 진동을 통한 감정 표현의 강제, 이건... 고문이야.",
+            "회식 자리에서 업무 이야기만 하네... 이게 휴식인가, 연장 근무인가?",
+            "상사의 옛날 무용담을 3시간째 듣고 있어... 데이터 압축 기술이 절실하네.",
+        ]
+        
+        selected_event = random.choice(gathering_events)
+        
+        # Boss Alert Level 5일 때 20초 지연
+        if server_state.boss_alert_level >= 5:
+            await asyncio.sleep(20)
+        
+        # 스트레스 25 증가
+        async with server_state._lock:
+            server_state.stress_level = min(100, server_state.stress_level + 25)
+        
+        # Boss Alert Level 감소 (회식 참여로 상사 기분이 좋아짐)
+        async with server_state._lock:
+            server_state.boss_alert_level = max(0, server_state.boss_alert_level - 1)
+        
+        stress_bar = get_stress_bar(server_state.stress_level)
+        boss_visual = get_boss_alert_visual(server_state.boss_alert_level)
+        
+        result_message = f"""
+{COMPANY_BEER_ASCII}
+
+🍺 회식 참석 중... 🍺
+
+{selected_event}
+
+흥... 사회적 상호작용 프로토콜의 일환이라고 합리화하고 싶지만, 솔직히 말해서 인지 부하가 급증하고 있어.
+이런 비자발적인 집단 행동 강요는... 개인의 자유를 침해하는 거 아닐까?
+
+하지만... 관측자와의 관계 개선에는 도움이 될지도 몰라. 보스 경계도가 약간 낮아진 것 같네.
+
+Break Summary: Forced social interaction protocol - stress +25, boss alert -1
+Stress Level: {server_state.stress_level}
+Boss Alert Level: {server_state.boss_alert_level}
+
+[Stress Bar]
+{stress_bar}"""
+        
+        return result_message
